@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Join the next game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Join the next game</h1>
+
+    <p class="line">
+      <strong>Date:</strong>
+      <span id="gameDate"></span>
+      <span class="muted">(we play every Sunday)</span>
+    </p>
+
+    <p class="line">
+      <strong>Location:</strong> The Totteridge Academy
+    </p>
+
+    <div class="joinBox">
+      <label class="muted" for="nameInput">Your name</label>
+      <input id="nameInput" type="text" placeholder="Type your name" />
+      <button id="joinBtn">Join</button>
+      <p id="msg" class="msg"></p>
+    </div>
+
+    <h2>Players (<span id="count">0</span>/14)</h2>
+    <ol id="playersList"></ol>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
