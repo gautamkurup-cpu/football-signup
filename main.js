@@ -17,7 +17,19 @@ function nextSunday(fromDate = new Date()) {
   d.setHours(0,0,0,0);
   return d;
 }
+function storageKey() {
 
+  const d = nextSunday(new Date());
+
+  const yyyy = d.getFullYear();
+
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+
+  const dd = String(d.getDate()).padStart(2, "0");
+
+  return `players_${yyyy}-${mm}-${dd}`;
+
+}
 function formatSundayDate(dateObj) {
   const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -34,10 +46,10 @@ renderNextGameDate();
 const MAX_PLAYERS = 14;
 
 function loadPlayers() {
-  return JSON.parse(localStorage.getItem("players") || "[]");
+  return JSON.parse(localStorage.getItem(storageKey()) || "[]");
 }
 function savePlayers(players) {
-  localStorage.setItem("players", JSON.stringify(players));
+  localStorage.setItem(storageKey(), JSON.stringify(players));
 }
 
 function renderPlayers(players) {
@@ -144,4 +156,5 @@ el.textContent = `${icon} ${desc}, ${Math.round(temp)}°C`;
   }
 }
 loadWeatherAt3pm();
+
 
