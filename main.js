@@ -114,9 +114,34 @@ async function loadWeatherAt3pm() {
       ([71,73,75].includes(code) ? "Snow" :
       ([80,81,82].includes(code) ? "Showers" :
       ([95,96,99].includes(code) ? "Thunder" : "Mixed")))))))));
-    el.textContent = `${desc} – ${Math.round(temp)}°C`;
+    const icon =
+
+  code === 0 ? "☀️" :
+
+  (code === 1 ? "🌤️" :
+
+  (code === 2 ? "⛅" :
+
+  (code === 3 ? "☁️" :
+
+  (code === 45 || code === 48 ? "🌫️" :
+
+  ([51,53,55].includes(code) ? "🌦️" :
+
+  ([61,63,65].includes(code) ? "🌧️" :
+
+  ([71,73,75].includes(code) ? "❄️" :
+
+  ([80,81,82].includes(code) ? "🌧️" :
+
+  ([95,96,99].includes(code) ? "⛈️" : "🌡️")))))))));
+
+ 
+
+el.textContent = `${icon} ${desc}, ${Math.round(temp)}°C`;
   } catch {
     el.textContent = "Weather unavailable";
   }
 }
 loadWeatherAt3pm();
+
