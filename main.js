@@ -74,3 +74,49 @@ document.getElementById("joinBtn").addEventListener("click", () => {
   input.value = "";
   renderPlayers(players);
 });
+// --- Weather at 3pm on the SAME Sunday shown on the page (Open-Meteo, free) ---
+async function loadWeatherAt3pm() {
+  const el = document.getElementById("weatherText");
+  if (!el) return;
+  // Totteridge Academy coordinates
+  const lat = 51.639470288472275;
+  const lon = -0.1997028625644069;
+  // Use the same Sunday date logic as the page
+  const d = nextSunday(new Date());
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const dateStr = `${yyyy}-${mm}-${dd}`; // YYYY-MM-DD
+  const url =
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `&hourly=temperature_2m,weather_code&timezone=Europe/London` +
+    `&start_date=${dateStr}&end_date=${dateStr}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const times = data.hourly.time;
+    const temps = data.hourly.temperature_2m;
+    const codes = data.hourly.weather_code;
+    // pick 15:00 (3pm)
+    let idx = times.findIndex(t => t.endsWith("T15:00"));
+    if (idx === -1) idx = 0;
+    const temp = temps[idx];
+    const code = codes[idx];
+    // very simple description
+    const desc =
+      code === 0 ? "Clear" :
+      (code === 1 ? "Mainly clear" :
+      (code === 2 ? "Partly cloudy" :
+      (code === 3 ? "Cloudy" :
+      (code === 45 || code === 48 ? "Fog" :
+      ([51,53,55].includes(code) ? "Drizzle" :
+      ([61,63,65].includes(code) ? "Rain" :
+      ([71,73,75].includes(code) ? "Snow" :
+      ([80,81,82].includes(code) ? "Showers" :
+      ([95,96,99].includes(code) ? "Thunder" : "Mixed")))))))));
+    el.textContent = `${desc} – ${Math.round(temp)}°C`;
+  } catch {
+    el.textContent = "Weather unavailable";
+  }
+}
+loadWeatherAt3pm();
