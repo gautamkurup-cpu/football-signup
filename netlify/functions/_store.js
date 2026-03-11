@@ -1,22 +1,16 @@
-import { connectLambda, getStore } from "@netlify/blobs";
+import { getStore } from "@netlify/blobs";
 
-function store(event) {
-  // Required in Lambda compatibility mode so Blobs works in production
-  connectLambda(event); // [2](https://www.codestudy.net/blog/netlify-how-do-you-deploy-sites-that-are-nested-in-a-folder/)
+function store() {
   return getStore("football-signup");
 }
 
-export async function getState(event) {
-  const s = store(event);
-
-  // Correct way to fetch JSON from Blobs (getJSON is not available here)
-  const state = await s.get("state", { type: "json" }).catch(() => null); // [1](https://github.com/opennextjs/opennextjs-netlify/issues/2703)
+export async function getState() {
+  const s = store();
+  const state = await s.get("state", { type: "json" }).catch(() => null);
 
   if (state) return state;
 
   const initial = { players: [] };
-
-  // Store JSON as a string (safe + portable)
   await s.set("state", JSON.stringify(initial), {
     metadata: { contentType: "application/json" }
   });
@@ -24,12 +18,10 @@ export async function getState(event) {
   return initial;
 }
 
-export async function saveState(event, state) {
-  const s = store(event);
-
+export async function saveState(state) {
+  const s = store();
   await s.set("state", JSON.stringify(state), {
     metadata: { contentType: "application/json" }
   });
-
   return state;
 }
