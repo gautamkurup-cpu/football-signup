@@ -1,96 +1,122 @@
-const ADMIN_PASSWORD = "football123"; // CHANGE THIS
 const MAX_PLAYERS = 14;
 
-function nextSunday(fromDate = new Date()) {
-  const d = new Date(fromDate);
-  const day = d.getDay();
-  const daysToAdd = (7 - day) % 7;
-  d.setDate(d.getDate() + daysToAdd);
-  d.setHours(0,0,0,0);
-  return d;
+let adminSecret = "";
+
+const el = (id) => document.getElementById(id);
+
+function setLoginMsg(text, isError = false) {
+  const m = el("loginMsg");
+  if (!m) return;
+  m.textContent = text || "";
+  m.style.color = isError ? "#b00020" : "#1a7f37";
 }
 
-function ordinal(n) {
-  const mod100 = n % 100;
-  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
-  switch (n % 10) {
-    case 1: return `${n}st`;
-    case 2: return `${n}nd`;
-    case 3: return `${n}rd`;
-    default: return `${n}th`;
-  }
+function setAdminMsg(text, isError = false) {
+  const m = el("adminMsg");
+  if (!m) return;
+  m.textContent = text || "";
+  m.style.color = isError ? "#b00020" : "#1b6cff";
 }
 
-function formatSundayDate(dateObj) {
-  const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  return `${weekdays[dateObj.getDay()]} ${ordinal(dateObj.getDate())} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+async function loadSharedState() {
+  const res = await fetch("/api/state");
+  return await res.json();
 }
 
-function storageKey() {
-  const d = nextSunday(new Date());
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `players_${yyyy}-${mm}-${dd}`;
-}
+function renderList(players) {
+  const list = el("adminList");
+  const count = el("countAdmin");
+  const resetBtn = el("resetBtn");
 
-function loadPlayers() {
-  return JSON.parse(localStorage.getItem(storageKey()) || "[]");
-}
+  if (!list || !count) return;
 
-function savePlayers(players) {
-  localStorage.setItem(storageKey(), JSON.stringify(players));
-}
-
-function render(players) {
-  document.getElementById("countAdmin").textContent = players.length;
-  const list = document.getElementById("adminList");
   list.innerHTML = "";
+  count.textContent = players.length;
 
-  players.forEach((name, idx) => {
+  // render each player with a Remove button
+  players.forEach((name) => {
     const li = document.createElement("li");
     li.style.display = "flex";
     li.style.justifyContent = "space-between";
+    li.style.alignItems = "center";
+    li.style.gap = "10px";
 
     const span = document.createElement("span");
     span.textContent = name;
 
     const btn = document.createElement("button");
     btn.textContent = "Remove";
-    btn.onclick = () => {
-      players.splice(idx, 1);
-      savePlayers(players);
-      render(players);
+    btn.style.width = "auto";
+    btn.style.padding = "8px 10px";
+    btn.style.background = "#333";
+    btn.style.color = "white";
+    btn.style.border = "none";
+    btn.style.borderRadius = "8px";
+    btn.style.cursor = "pointer";
+
+    btn.onclick = async () => {
+      if (!confirm(`Remove ${name}?`)) return;
+
+      const resp = await fetch("/api/adminRemove", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secret: adminSecret, name })
+      });
+
+      if (resp.status === 401) {
+        setAdminMsg("Unauthorized (wrong password or ADMIN_SECRET not set)", true);
+        return;
+      }
+
+      const data = await resp.json().catch(() => ({}));
+      renderList(data.players || []);
+      setAdminMsg(`${name} removed`);
     };
 
     li.appendChild(span);
     li.appendChild(btn);
     list.appendChild(li);
   });
+
+  // disable reset if empty
+  if (resetBtn) resetBtn.disabled = players.length === 0;
 }
 
-document.getElementById("loginBtn").onclick = () => {
-  const pass = document.getElementById("adminPass").value;
-  const msg = document.getElementById("loginMsg");
+async function refresh() {
+  const state = await loadSharedState();
+  renderList(state.players || []);
+}
 
-  if (pass !== ADMIN_PASSWORD) {
-    msg.textContent = "Wrong password";
-    msg.style.color = "#b00020";
+el("loginBtn").onclick = async () => {
+  adminSecret = (el("adminPass").value || "").trim();
+  if (!adminSecret) {
+    setLoginMsg("Enter password", true);
     return;
   }
 
-  document.getElementById("loginBox").style.display = "none";
-  document.getElementById("adminPanel").style.display = "block";
+  // Show panel; actual auth is enforced by the backend functions.
+  el("loginBox").style.display = "none";
+  el("adminPanel").style.display = "block";
 
-  document.getElementById("gameDateAdmin").textContent = formatSundayDate(nextSunday(new Date()));
+  await refresh();
+  setAdminMsg("Loaded shared list");
+};
 
-  let players = loadPlayers();
-  render(players);
+el("resetBtn").onclick = async () => {
+  if (!confirm("Reset list for everyone?")) return;
 
-  document.getElementById("resetBtn").onclick = () => {
-    localStorage.removeItem(storageKey());
-    players = [];
-    render(players);
-  };
+  const resp = await fetch("/api/adminReset", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ secret: adminSecret })
+  });
+
+  if (resp.status === 401) {
+    setAdminMsg("Unauthorized (wrong password or ADMIN_SECRET not set)", true);
+    return;
+  }
+
+  const data = await resp.json().catch(() => ({}));
+  renderList(data.players || []);
+  setAdminMsg("List reset");
 };
