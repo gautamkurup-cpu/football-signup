@@ -1,3 +1,27 @@
+// -----------------------------
+// Settings
+// -----------------------------
+const MAX_PLAYERS = 14;
+
+// Totteridge Academy coordinates (used for weather)
+const LAT = 51.639470288472275;
+const LON = -0.1997028625644069;
+
+// -----------------------------
+// Helpers (DOM)
+// -----------------------------
+const el = (id) => document.getElementById(id);
+
+function setMsg(text, isError = false) {
+  const m = el("msg");
+  if (!m) return;
+  m.textContent = text || "";
+  m.style.color = isError ? "#b00020" : "#1a7f37";
+}
+
+// -----------------------------
+// Date: next Sunday (Option A)
+// -----------------------------
 function ordinal(n) {
   const mod100 = n % 100;
   if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
@@ -11,25 +35,13 @@ function ordinal(n) {
 
 function nextSunday(fromDate = new Date()) {
   const d = new Date(fromDate);
-  const day = d.getDay();
-  const daysToAdd = (7 - day) % 7;
+  const day = d.getDay();          // Sunday = 0
+  const daysToAdd = (7 - day) % 7; // 0 if Sunday, else days until Sunday
   d.setDate(d.getDate() + daysToAdd);
-  d.setHours(0,0,0,0);
+  d.setHours(0, 0, 0, 0);
   return d;
 }
-function storageKey() {
 
-  const d = nextSunday(new Date());
-
-  const yyyy = d.getFullYear();
-
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-
-  const dd = String(d.getDate()).padStart(2, "0");
-
-  return `players_${yyyy}-${mm}-${dd}`;
-
-}
 function formatSundayDate(dateObj) {
   const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -37,124 +49,188 @@ function formatSundayDate(dateObj) {
 }
 
 function renderNextGameDate() {
-  const el = document.getElementById("gameDate");
-  if (el) el.textContent = formatSundayDate(nextSunday(new Date()));
+  const d = nextSunday(new Date());
+  const dateEl = el("gameDate");
+  if (dateEl) dateEl.textContent = formatSundayDate(d);
+  return d; // return so weather uses the same date
 }
 
-renderNextGameDate();
+// -----------------------------
+// Shared list state (SERVER)
+// -----------------------------
+let players = [];
 
-const MAX_PLAYERS = 14;
+function renderPlayers(list) {
+  const listEl = el("playersList");
+  const countEl = el("count");
+  if (!listEl || !countEl) return;
 
-function loadPlayers() {
-  return JSON.parse(localStorage.getItem(storageKey()) || "[]");
-}
-function savePlayers(players) {
-  localStorage.setItem(storageKey(), JSON.stringify(players));
-}
+  listEl.innerHTML = "";
 
-function renderPlayers(players) {
-  const list = document.getElementById("playersList");
-  const count = document.getElementById("count");
-  list.innerHTML = "";
-
+  // Always show 1–14 slots
   for (let i = 0; i < MAX_PLAYERS; i++) {
     const li = document.createElement("li");
-    if (players[i]) {
-      li.textContent = players[i];
+    if (list[i]) {
+      li.textContent = list[i];
     } else {
       li.textContent = "—";
       li.className = "emptySlot";
     }
-    list.appendChild(li);
+    listEl.appendChild(li);
   }
 
-  count.textContent = players.length;
+  countEl.textContent = list.length;
+
+  // Disable join if full
+  const joinBtn = el("joinBtn");
+  const nameInput = el("nameInput");
+  if (joinBtn && nameInput) {
+    const full = list.length >= MAX_PLAYERS;
+    joinBtn.disabled = full;
+    nameInput.disabled = full;
+    if (full) setMsg(`Game is full – ${MAX_PLAYERS}/${MAX_PLAYERS} ✅`, false);
+  }
 }
 
-let players = loadPlayers();
-renderPlayers(players);
+async function loadPlayersFromServer() {
+  try {
+    const res = await fetch("/api/state");
+    const data = await res.json();
+    players = Array.isArray(data.players) ? data.players : [];
+    renderPlayers(players);
+  } catch (e) {
+    setMsg("Could not load the shared list. Try refreshing.", true);
+  }
+}
 
-document.getElementById("joinBtn").addEventListener("click", () => {
-  const input = document.getElementById("nameInput");
-  const name = input.value.trim();
+async function joinPlayerOnServer(name) {
+  const res = await fetch("/api/join", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name })
+  });
 
-  if (!name) return;
-  if (players.length >= MAX_PLAYERS) return;
+  // Full / capped response
+  if (res.status === 409) {
+    const data = await res.json().catch(() => ({}));
+    setMsg(data.error || "Game is full ✅", true);
+    return null;
+  }
 
-  players.push(name);
-  savePlayers(players);
-  input.value = "";
-  renderPlayers(players);
-});
-// --- Weather at 3pm on the SAME Sunday shown on the page (Open-Meteo, free) ---
-async function loadWeatherAt3pm() {
-  const el = document.getElementById("weatherText");
-  if (!el) return;
-  // Totteridge Academy coordinates
-  const lat = 51.639470288472275;
-  const lon = -0.1997028625644069;
-  // Use the same Sunday date logic as the page
-  const d = nextSunday(new Date());
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const dateStr = `${yyyy}-${mm}-${dd}`; // YYYY-MM-DD
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    setMsg(data.error || "Could not join. Try again.", true);
+    return null;
+  }
+
+  return data;
+}
+
+// -----------------------------
+// Weather (3pm Sunday) – only if weatherText exists in index.html
+// -----------------------------
+function weatherEmojiFromCode(code) {
+  return code === 0 ? "☀️" :
+    (code === 1 ? "🌤️" :
+    (code === 2 ? "⛅" :
+    (code === 3 ? "☁️" :
+    (code === 45 || code === 48 ? "🌫️" :
+    ([51,53,55].includes(code) ? "🌦️" :
+    ([61,63,65].includes(code) ? "🌧️" :
+    ([71,73,75].includes(code) ? "❄️" :
+    ([80,81,82].includes(code) ? "🌧️" :
+    ([95,96,99].includes(code) ? "⛈️" : "🌡️")))))))));
+}
+
+function weatherDescFromCode(code) {
+  if (code === 0) return "Clear";
+  if (code === 1) return "Mainly clear";
+  if (code === 2) return "Partly cloudy";
+  if (code === 3) return "Cloudy";
+  if (code === 45 || code === 48) return "Fog";
+  if ([51,53,55].includes(code)) return "Drizzle";
+  if ([61,63,65].includes(code)) return "Rain";
+  if ([71,73,75].includes(code)) return "Snow";
+  if ([80,81,82].includes(code)) return "Showers";
+  if ([95,96,99].includes(code)) return "Thunder";
+  return "Mixed";
+}
+
+async function loadWeatherAt3pm(gameDate) {
+  const weatherEl = el("weatherText");
+  if (!weatherEl) return; // if you didn't add weather to index.html, do nothing
+
+  // Build YYYY-MM-DD for the SAME Sunday shown on the page
+  const yyyy = gameDate.getFullYear();
+  const mm = String(gameDate.getMonth() + 1).padStart(2, "0");
+  const dd = String(gameDate.getDate()).padStart(2, "0");
+  const dateStr = `${yyyy}-${mm}-${dd}`;
+
   const url =
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
     `&hourly=temperature_2m,weather_code&timezone=Europe/London` +
     `&start_date=${dateStr}&end_date=${dateStr}`;
+
   try {
     const res = await fetch(url);
     const data = await res.json();
-    const times = data.hourly.time;
-    const temps = data.hourly.temperature_2m;
-    const codes = data.hourly.weather_code;
-    // pick 15:00 (3pm)
-    let idx = times.findIndex(t => t.endsWith("T15:00"));
+
+    const times = data?.hourly?.time || [];
+    const temps = data?.hourly?.temperature_2m || [];
+    const codes = data?.hourly?.weather_code || [];
+
+    let idx = times.findIndex(t => t.endsWith("T15:00")); // 3pm
     if (idx === -1) idx = 0;
+
     const temp = temps[idx];
     const code = codes[idx];
-    // very simple description
-    const desc =
-      code === 0 ? "Clear" :
-      (code === 1 ? "Mainly clear" :
-      (code === 2 ? "Partly cloudy" :
-      (code === 3 ? "Cloudy" :
-      (code === 45 || code === 48 ? "Fog" :
-      ([51,53,55].includes(code) ? "Drizzle" :
-      ([61,63,65].includes(code) ? "Rain" :
-      ([71,73,75].includes(code) ? "Snow" :
-      ([80,81,82].includes(code) ? "Showers" :
-      ([95,96,99].includes(code) ? "Thunder" : "Mixed")))))))));
-    const icon =
 
-  code === 0 ? "☀️" :
+    const icon = weatherEmojiFromCode(code);
+    const desc = weatherDescFromCode(code);
 
-  (code === 1 ? "🌤️" :
-
-  (code === 2 ? "⛅" :
-
-  (code === 3 ? "☁️" :
-
-  (code === 45 || code === 48 ? "🌫️" :
-
-  ([51,53,55].includes(code) ? "🌦️" :
-
-  ([61,63,65].includes(code) ? "🌧️" :
-
-  ([71,73,75].includes(code) ? "❄️" :
-
-  ([80,81,82].includes(code) ? "🌧️" :
-
-  ([95,96,99].includes(code) ? "⛈️" : "🌡️")))))))));
-
- 
-
-el.textContent = `${icon} ${desc}, ${Math.round(temp)}°C`;
+    weatherEl.textContent = `${icon} ${desc}, ${Math.round(temp)}°C`;
   } catch {
-    el.textContent = "Weather unavailable";
+    weatherEl.textContent = "Weather unavailable";
   }
 }
-loadWeatherAt3pm();
 
+// -----------------------------
+// Wire up events
+// -----------------------------
+function wireJoinButton() {
+  const joinBtn = el("joinBtn");
+  const input = el("nameInput");
+  if (!joinBtn || !input) return;
 
+  joinBtn.onclick = async () => {
+    const name = input.value.trim();
+    if (!name) {
+      setMsg("Please enter your name.", true);
+      return;
+    }
+
+    joinBtn.disabled = true;
+    setMsg("");
+
+    const result = await joinPlayerOnServer(name);
+
+    joinBtn.disabled = false;
+
+    if (!result) return;
+
+    players = Array.isArray(result.players) ? result.players : [];
+    renderPlayers(players);
+
+    input.value = "";
+    setMsg("You’re in! See you on the pitch ⚽", false);
+  };
+}
+
+// -----------------------------
+// Init
+// -----------------------------
+const gameDate = renderNextGameDate();   // sets the date text and returns the same Date object
+wireJoinButton();                        // join button now calls the server
+loadPlayersFromServer();                 // loads shared list
+loadWeatherAt3pm(gameDate);              // optional: only if weatherText exists
