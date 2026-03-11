@@ -1,22 +1,13 @@
 import { getState } from "./_store.js";
 
-export default async (event) => {
+export default async (req) => {
   try {
-    const state = await getState(event);
-
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(state)
-    };
+    const state = await getState();
+    return Response.json(state); // ✅ modern runtime
   } catch (err) {
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        error: "state function crashed",
-        message: err?.message || String(err)
-      })
-    };
+    return Response.json(
+      { error: err?.message || String(err) },
+      { status: 500 }
+    );
   }
 };
