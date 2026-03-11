@@ -81,7 +81,6 @@ function renderPlayers(list) {
 
   countEl.textContent = list.length;
 
-  // Disable join if full
   const joinBtn = el("joinBtn");
   const nameInput = el("nameInput");
   if (joinBtn && nameInput) {
@@ -92,9 +91,10 @@ function renderPlayers(list) {
   }
 }
 
+// ✅ Cache-busting version: always fetch fresh state
 async function loadPlayersFromServer() {
   try {
-    const res = await fetch("/api/state");
+    const res = await fetch(`/api/state?ts=${Date.now()}`, { cache: "no-store" });
     const data = await res.json();
     players = Array.isArray(data.players) ? data.players : [];
     renderPlayers(players);
@@ -110,7 +110,6 @@ async function joinPlayerOnServer(name) {
     body: JSON.stringify({ name })
   });
 
-  // Full / capped response
   if (res.status === 409) {
     const data = await res.json().catch(() => ({}));
     setMsg(data.error || "Game is full ✅", true);
@@ -159,9 +158,8 @@ function weatherDescFromCode(code) {
 
 async function loadWeatherAt3pm(gameDate) {
   const weatherEl = el("weatherText");
-  if (!weatherEl) return; // if you didn't add weather to index.html, do nothing
+  if (!weatherEl) return;
 
-  // Build YYYY-MM-DD for the SAME Sunday shown on the page
   const yyyy = gameDate.getFullYear();
   const mm = String(gameDate.getMonth() + 1).padStart(2, "0");
   const dd = String(gameDate.getDate()).padStart(2, "0");
@@ -180,7 +178,7 @@ async function loadWeatherAt3pm(gameDate) {
     const temps = data?.hourly?.temperature_2m || [];
     const codes = data?.hourly?.weather_code || [];
 
-    let idx = times.findIndex(t => t.endsWith("T15:00")); // 3pm
+    let idx = times.findIndex(t => t.endsWith("T15:00"));
     if (idx === -1) idx = 0;
 
     const temp = temps[idx];
@@ -230,7 +228,7 @@ function wireJoinButton() {
 // -----------------------------
 // Init
 // -----------------------------
-const gameDate = renderNextGameDate();   // sets the date text and returns the same Date object
-wireJoinButton();                        // join button now calls the server
-loadPlayersFromServer();                 // loads shared list
-loadWeatherAt3pm(gameDate);              // optional: only if weatherText exists
+const gameDate = renderNextGameDate();
+wireJoinButton();
+loadPlayersFromServer();
+loadWeatherAt3pm(gameDate);
