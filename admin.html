@@ -6,26 +6,49 @@
   <title>Admin – Football Signup</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="card">
     <h1>Admin</h1>
+    <p class="muted">Manage the shared signup list</p>
 
+    <!-- Login -->
     <div id="loginBox" class="joinBox">
       <label class="muted" for="adminPass">Admin password</label>
-      <input id="adminPass" type="password" placeholder="Enter password" />
+      <input
+        id="adminPass"
+        type="password"
+        placeholder="Enter password"
+        autocomplete="off"
+      />
       <button id="loginBtn">Login</button>
       <p id="loginMsg" class="msg"></p>
     </div>
 
+    <!-- Admin panel -->
     <div id="adminPanel" style="display:none;">
-      <p class="line"><strong>Game date:</strong> <span id="gameDateAdmin"></span></p>
+      <div class="adminHeader">
+        <p class="line">
+          <strong>Status:</strong>
+          <span class="adminBadge">ADMIN</span>
+        </p>
+        <p class="line">
+          <strong>Players:</strong>
+          <span id="countAdmin">0</span>/14
+        </p>
+      </div>
 
-      <button id="resetBtn" style="background:#b00020;">Reset list (clear all)</button>
+      <div class="adminActions">
+        <button id="resetBtn" class="danger">Reset list</button>
+        <p class="muted small">
+          Reset clears the list for everyone immediately.
+        </p>
+      </div>
 
-      <h2>Players (<span id="countAdmin">0</span>/14)</h2>
+      <h2>Players</h2>
       <ol id="adminList"></ol>
 
-      <p class="muted">This admin page edits the signup list for the current week.</p>
+      <p id="adminMsg" class="msg"></p>
     </div>
   </div>
 
