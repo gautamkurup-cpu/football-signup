@@ -6,6 +6,7 @@
   <title>Join the next game</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="card">
     <h1>Join the next game</h1>
@@ -13,33 +14,44 @@
     <p class="line">
       <strong>Date:</strong>
       <span id="gameDate"></span>
+      <span class="muted">(we play every Sunday)</span>
     </p>
+
     <p class="line">
-  <strong>Location:</strong><br>
-  The Totteridge Academy<br>
-  Barnet Ln, London N20 8AZ<br>
-  <a href="https://www.google.com/maps?q=The+Totteridge+Academy+Barnet+Ln+London+N20+8AZ" target="_blank">
-    Open in Google Maps
-  </a>
-</p>
-<p class="line">
-  <strong>Weather (3pm):</strong>
-  <span id="weatherText" class="muted">Loading…</span>
-</p>
+      <strong>Location:</strong>
+      The Totteridge Academy
+    </p>
+
+    <!-- Weather (optional, populated by main.js if present) -->
+    <p class="line muted">
+      <strong>Weather (3pm):</strong>
+      <span id="weatherText">Loading…</span>
+    </p>
+
     <div class="joinBox">
       <label class="muted" for="nameInput">Your name</label>
-      <input id="nameInput" type="text" placeholder="Type your name" />
+      <input
+        id="nameInput"
+        type="text"
+        placeholder="Type your name"
+        autocomplete="off"
+      />
       <button id="joinBtn">Join</button>
       <p id="msg" class="msg"></p>
     </div>
 
-    <h2>Players (<span id="count">0</span>/14)</h2>
+    <h2>
+      Players (<span id="count">0</span>/14)
+    </h2>
+
     <ol id="playersList"></ol>
+
+    <!-- Discreet admin link (Option A) -->
+    <p class="muted" style="text-align:center; margin-top:24px;">
+      <a href="/admin.html">Admin</a>
+    </p>
   </div>
 
   <script src="main.js"></script>
 </body>
 </html>
-
-
-
