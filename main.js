@@ -232,3 +232,7 @@ const gameDate = renderNextGameDate();
 wireJoinButton();
 loadPlayersFromServer();
 loadWeatherAt3pm(gameDate);
+// --- Auto-refresh shared list to avoid edge/CDN timing issues ---
+setInterval(() => {
+  loadPlayersFromServer();
+}, 2000);
