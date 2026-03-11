@@ -18,8 +18,9 @@ function setAdminMsg(text, isError = false) {
   m.style.color = isError ? "#b00020" : "#1b6cff";
 }
 
+// ✅ Cache-busting version: always fetch fresh state
 async function loadSharedState() {
-  const res = await fetch("/api/state");
+  const res = await fetch(`/api/state?ts=${Date.now()}`, { cache: "no-store" });
   return await res.json();
 }
 
@@ -33,7 +34,6 @@ function renderList(players) {
   list.innerHTML = "";
   count.textContent = players.length;
 
-  // render each player with a Remove button
   players.forEach((name) => {
     const li = document.createElement("li");
     li.style.display = "flex";
@@ -78,7 +78,6 @@ function renderList(players) {
     list.appendChild(li);
   });
 
-  // disable reset if empty
   if (resetBtn) resetBtn.disabled = players.length === 0;
 }
 
@@ -94,7 +93,6 @@ el("loginBtn").onclick = async () => {
     return;
   }
 
-  // Show panel; actual auth is enforced by the backend functions.
   el("loginBox").style.display = "none";
   el("adminPanel").style.display = "block";
 
