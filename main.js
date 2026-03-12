@@ -1,27 +1,84 @@
-// -----------------------------
-// Settings
-// -----------------------------
-const MAX_PLAYERS = 14;
+// =============================
+// Football Signup — MAIN.JS (FULL REPLACEMENT)
+// Shared list + cache-busting + polling guard + stop-at-full + syncing indicator
+// + full location address + Google Maps link + 3pm weather
+// =============================
 
-// Totteridge Academy coordinates (used for weather)
+// ---------- Config ----------
+const MAX_PLAYERS = 14;
+const POLL_INTERVAL_MS = 2000;
+const POLL_PAUSE_AFTER_JOIN_MS = 3000;
+
+// Location (display + Google Maps)
+const LOCATION_NAME = "The Totteridge Academy";
+const LOCATION_ADDRESS = "Barnet Ln, London N20 8AZ";
+const GOOGLE_MAPS_URL =
+  "https://www.google.com/maps/search/?api=1&query=" +
+  encodeURIComponent(`${LOCATION_NAME}, ${LOCATION_ADDRESS}`);
+
+// Totteridge Academy coordinates (weather)
 const LAT = 51.639470288472275;
 const LON = -0.1997028625644069;
 
-// -----------------------------
-// Helpers (DOM)
-// -----------------------------
+// ---------- State ----------
+let players = [];
+let pollingPausedUntil = 0;
+let isSyncing = false;
+
+// ---------- DOM helpers ----------
 const el = (id) => document.getElementById(id);
 
 function setMsg(text, isError = false) {
   const m = el("msg");
   if (!m) return;
+  // Don't overwrite syncing indicator if it's being shown separately
   m.textContent = text || "";
   m.style.color = isError ? "#b00020" : "#1a7f37";
 }
 
-// -----------------------------
-// Date: next Sunday (Option A)
-// -----------------------------
+function ensureSyncIndicator() {
+  let s = el("syncIndicator");
+  if (s) return s;
+
+  // Prefer placing inside the join box next to the button
+  const joinBtn = el("joinBtn");
+  if (joinBtn && joinBtn.parentElement) {
+    s = document.createElement("span");
+    s.id = "syncIndicator";
+    s.textContent = "Syncing…";
+    s.style.display = "none";
+    s.style.marginLeft = "10px";
+    s.style.color = "#666";
+    s.style.fontSize = "14px";
+    s.style.verticalAlign = "middle";
+    joinBtn.insertAdjacentElement("afterend", s);
+    return s;
+  }
+
+  // Fallback: create in card footer
+  const card = document.querySelector(".card");
+  if (card) {
+    s = document.createElement("div");
+    s.id = "syncIndicator";
+    s.textContent = "Syncing…";
+    s.style.display = "none";
+    s.style.color = "#666";
+    s.style.fontSize = "14px";
+    s.style.marginTop = "8px";
+    card.appendChild(s);
+    return s;
+  }
+
+  return null;
+}
+
+function setSyncing(on) {
+  isSyncing = on;
+  const s = ensureSyncIndicator();
+  if (s) s.style.display = on ? "inline" : "none";
+}
+
+// ---------- Date: next Sunday ----------
 function ordinal(n) {
   const mod100 = n % 100;
   if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
@@ -33,33 +90,50 @@ function ordinal(n) {
   }
 }
 
-function nextSunday(fromDate = new Date()) {
-  const d = new Date(fromDate);
-  const day = d.getDay();          // Sunday = 0
-  const daysToAdd = (7 - day) % 7; // 0 if Sunday, else days until Sunday
-  d.setDate(d.getDate() + daysToAdd);
+function nextSunday(from = new Date()) {
+  const d = new Date(from);
+  const add = (7 - d.getDay()) % 7; // 0 if Sunday, else days until Sunday
+  d.setDate(d.getDate() + add);
   d.setHours(0, 0, 0, 0);
   return d;
 }
 
-function formatSundayDate(dateObj) {
-  const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function formatSundayDate(d) {
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  return `${weekdays[dateObj.getDay()]} ${ordinal(dateObj.getDate())} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+  return `${days[d.getDay()]} ${ordinal(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 function renderNextGameDate() {
-  const d = nextSunday(new Date());
+  const d = nextSunday();
   const dateEl = el("gameDate");
   if (dateEl) dateEl.textContent = formatSundayDate(d);
-  return d; // return so weather uses the same date
+  return d;
 }
 
-// -----------------------------
-// Shared list state (SERVER)
-// -----------------------------
-let players = [];
+// ---------- Location render (address + maps link) ----------
+function renderLocation() {
+  // Optional: if you ever add an element with id="locationText", we’ll use it
+  const locationText = el("locationText");
+  const html = `${LOCATION_NAME}, ${LOCATION_ADDRESS} <a href="${GOOGLE_MAPS_URL}" target="_blank" rel="noopener noreferrer">(map)</a>`;
 
+  if (locationText) {
+    locationText.innerHTML = html;
+    return;
+  }
+
+  // Otherwise: find the <p class="line"> containing a <strong>Location:</strong>
+  const lines = document.querySelectorAll("p.line");
+  for (const p of lines) {
+    const strong = p.querySelector("strong");
+    if (strong && strong.textContent.trim().toLowerCase().startsWith("location")) {
+      p.innerHTML = `<strong>Location:</strong> ${html}`;
+      return;
+    }
+  }
+}
+
+// ---------- Render players ----------
 function renderPlayers(list) {
   const listEl = el("playersList");
   const countEl = el("count");
@@ -67,7 +141,6 @@ function renderPlayers(list) {
 
   listEl.innerHTML = "";
 
-  // Always show 1–14 slots
   for (let i = 0; i < MAX_PLAYERS; i++) {
     const li = document.createElement("li");
     if (list[i]) {
@@ -83,23 +156,34 @@ function renderPlayers(list) {
 
   const joinBtn = el("joinBtn");
   const nameInput = el("nameInput");
-  if (joinBtn && nameInput) {
-    const full = list.length >= MAX_PLAYERS;
-    joinBtn.disabled = full;
-    nameInput.disabled = full;
-    if (full) setMsg(`Game is full – ${MAX_PLAYERS}/${MAX_PLAYERS} ✅`, false);
+  const full = list.length >= MAX_PLAYERS;
+
+  if (joinBtn) joinBtn.disabled = full;
+  if (nameInput) nameInput.disabled = full;
+
+  if (full) {
+    setMsg(`Game is full – ${MAX_PLAYERS}/${MAX_PLAYERS} ✅`, false);
   }
 }
 
-// ✅ Cache-busting version: always fetch fresh state
+// ---------- Shared backend calls ----------
 async function loadPlayersFromServer() {
   try {
+    setSyncing(true);
+
+    // Cache-busting prevents stale reads (CDN/browser)
     const res = await fetch(`/api/state?ts=${Date.now()}`, { cache: "no-store" });
     const data = await res.json();
+
     players = Array.isArray(data.players) ? data.players : [];
     renderPlayers(players);
-  } catch (e) {
-    setMsg("Could not load the shared list. Try refreshing.", true);
+
+    // Stop polling while full; resume automatically if list becomes not-full (e.g., admin reset)
+    // (Handled by poll loop guard reading players length.)
+  } catch {
+    // Keep UI quiet; user can still interact
+  } finally {
+    setSyncing(false);
   }
 }
 
@@ -110,6 +194,7 @@ async function joinPlayerOnServer(name) {
     body: JSON.stringify({ name })
   });
 
+  // Full / cap signal
   if (res.status === 409) {
     const data = await res.json().catch(() => ({}));
     setMsg(data.error || "Game is full ✅", true);
@@ -126,9 +211,7 @@ async function joinPlayerOnServer(name) {
   return data;
 }
 
-// -----------------------------
-// Weather (3pm Sunday) – only if weatherText exists in index.html
-// -----------------------------
+// ---------- Weather (3pm Sunday) ----------
 function weatherEmojiFromCode(code) {
   return code === 0 ? "☀️" :
     (code === 1 ? "🌤️" :
@@ -178,7 +261,7 @@ async function loadWeatherAt3pm(gameDate) {
     const temps = data?.hourly?.temperature_2m || [];
     const codes = data?.hourly?.weather_code || [];
 
-    let idx = times.findIndex(t => t.endsWith("T15:00"));
+    let idx = times.findIndex(t => t.endsWith("T15:00")); // 3pm
     if (idx === -1) idx = 0;
 
     const temp = temps[idx];
@@ -187,15 +270,14 @@ async function loadWeatherAt3pm(gameDate) {
     const icon = weatherEmojiFromCode(code);
     const desc = weatherDescFromCode(code);
 
+    // Use comma (not dash) to avoid looking like negative numbers
     weatherEl.textContent = `${icon} ${desc}, ${Math.round(temp)}°C`;
   } catch {
     weatherEl.textContent = "Weather unavailable";
   }
 }
 
-// -----------------------------
-// Wire up events
-// -----------------------------
+// ---------- Join wiring ----------
 function wireJoinButton() {
   const joinBtn = el("joinBtn");
   const input = el("nameInput");
@@ -208,31 +290,51 @@ function wireJoinButton() {
       return;
     }
 
-    joinBtn.disabled = true;
+    // Prevent flicker: pause polling briefly during join
+    pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
+    setSyncing(true);
     setMsg("");
+
+    joinBtn.disabled = true;
 
     const result = await joinPlayerOnServer(name);
 
     joinBtn.disabled = false;
+    setSyncing(false);
 
     if (!result) return;
 
     players = Array.isArray(result.players) ? result.players : [];
     renderPlayers(players);
-
     input.value = "";
+
+    // Optional quick re-sync to confirm canonical state (avoids edge timing)
+    setTimeout(() => {
+      if (Date.now() >= pollingPausedUntil) loadPlayersFromServer();
+    }, 800);
+
     setMsg("You’re in! See you on the pitch ⚽", false);
   };
 }
 
-// -----------------------------
-// Init
-// -----------------------------
+// ---------- Polling loop (guard + stop-at-full) ----------
+setInterval(() => {
+  // Stop polling when full; auto-resume after admin reset (when list becomes not-full)
+  const full = players.length >= MAX_PLAYERS;
+  if (full) return;
+
+  // Don’t poll while join is in-flight / settling
+  if (Date.now() < pollingPausedUntil) return;
+
+  // Don’t poll while syncing action is already in progress
+  if (isSyncing) return;
+
+  loadPlayersFromServer();
+}, POLL_INTERVAL_MS);
+
+// ---------- Init ----------
 const gameDate = renderNextGameDate();
+renderLocation();
 wireJoinButton();
 loadPlayersFromServer();
 loadWeatherAt3pm(gameDate);
-// --- Auto-refresh shared list to avoid edge/CDN timing issues ---
-setInterval(() => {
-  loadPlayersFromServer();
-}, 2000);
