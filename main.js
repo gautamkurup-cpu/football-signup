@@ -1,5 +1,5 @@
 // =============================
-// Football Signup — MAIN.JS (FULL REPLACEMENT)
+// Football Signup — MAIN.JS (FINAL VERSION)
 // =============================
 
 // ---------- Config ----------
@@ -22,6 +22,7 @@ const LON = -0.1997028625644069;
 let players = [];
 let pollingPausedUntil = 0;
 let isSyncing = false;
+let pendingJoinName = null; // protects your optimistic join
 
 // ---------- DOM helpers ----------
 const el = (id) => document.getElementById(id);
@@ -189,13 +190,12 @@ async function loadPlayersFromServer(showIndicator = false) {
     const data = await res.json();
 
     const newPlayers = Array.isArray(data.players) ? data.players : [];
-    
-// --- Prevent flicker: ignore stale server updates that remove local optimistic entries ---
-for (const p of players) {
-  if (!newPlayers.includes(p)) {
-    return; // stale server read → ignore
-  }
-}
+
+    // --- Prevent flicker: ignore stale server updates that remove our optimistic join ---
+    if (pendingJoinName && !newPlayers.includes(pendingJoinName)) {
+      return;
+    }
+
     // --- Smart full-list protection ---
     if (players.length >= MAX_PLAYERS && newPlayers.length >= MAX_PLAYERS) {
       return;
@@ -203,6 +203,12 @@ for (const p of players) {
 
     if (!arraysEqual(players, newPlayers)) {
       players = newPlayers;
+
+      // If server confirms our join, clear the pending flag
+      if (pendingJoinName && newPlayers.includes(pendingJoinName)) {
+        pendingJoinName = null;
+      }
+
       renderPlayers(players);
     }
 
@@ -320,6 +326,8 @@ function wireJoinButton() {
       return;
     }
 
+    pendingJoinName = name; // protect optimistic join
+
     pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
     setMsg("");
 
@@ -358,14 +366,14 @@ setInterval(() => {
 // ---------- Init ----------
 const gameDate = renderNextGameDate();
 renderLocation();
-// Fix weather label font size (Weather (3pm))
+
+// Fix weather label font size
 const weatherLine = document.querySelector("#weatherText")?.parentElement;
 if (weatherLine) {
   weatherLine.style.fontSize = "16px";
   weatherLine.style.fontWeight = "500";
 }
+
 wireJoinButton();
 loadPlayersFromServer(false);
 loadWeatherAt3pm(gameDate);
-
-
