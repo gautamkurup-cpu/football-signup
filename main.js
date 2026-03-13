@@ -7,7 +7,7 @@
 // ---------- Config ----------
 const MAX_PLAYERS = 14;
 const POLL_INTERVAL_MS = 2000;
-const POLL_PAUSE_AFTER_JOIN_MS = 3000;
+const POLL_PAUSE_AFTER_JOIN_MS = 6000; // extended to avoid stale blob reads
 
 // Location (display + Google Maps)
 const LOCATION_NAME = "The Totteridge Academy";
@@ -293,6 +293,7 @@ function wireJoinButton() {
       return;
     }
 
+    // Pause polling while join is in-flight
     pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
     setMsg("");
 
@@ -306,10 +307,15 @@ function wireJoinButton() {
 
     if (!result) return;
 
+    // Optimistic UI: update immediately
     players = Array.isArray(result.players) ? result.players : [];
     renderPlayers(players);
     input.value = "";
 
+    // Extend freeze window to avoid stale poll overwriting UI
+    pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
+
+    // Optional: confirm canonical state after delay
     setTimeout(() => {
       if (Date.now() >= pollingPausedUntil) loadPlayersFromServer(false);
     }, 800);
