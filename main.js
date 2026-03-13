@@ -114,17 +114,24 @@ function renderLocation() {
     ${LOCATION_NAME}, ${LOCATION_ADDRESS}
     <a href="${GOOGLE_MAPS_URL}" target="_blank" rel="noopener noreferrer"
        style="
-         display:inline-block;
-         margin-left:10px;
-         padding:4px 10px;
+         display:inline-flex;
+         align-items:center;
+         gap:6px;
+         margin-left:12px;
+         padding:6px 14px;
          background:#1a73e8;
          color:white;
-         border-radius:4px;
+         border-radius:6px;
          text-decoration:none;
-         font-size:13px;
+         font-size:14px;
          font-weight:500;
-       ">
-       Open in Google Maps →
+         transition:background 0.2s ease;
+       "
+       onmouseover="this.style.background='#1664c4'"
+       onmouseout="this.style.background='#1a73e8'"
+    >
+       <span style="font-size:16px;">📍</span>
+       Open in Google Maps
     </a>
   `;
 
@@ -293,8 +300,15 @@ async function loadWeatherAt3pm(gameDate) {
     const desc = weatherDescFromCode(code);
 
     weatherEl.textContent = `${icon} ${desc}, ${Math.round(temp)}°C`;
+
+    // Weather font fix
+    weatherEl.style.fontSize = "16px";
+    weatherEl.style.fontWeight = "500";
+
   } catch {
     weatherEl.textContent = "Weather unavailable";
+    weatherEl.style.fontSize = "16px";
+    weatherEl.style.fontWeight = "500";
   }
 }
 
