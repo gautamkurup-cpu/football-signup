@@ -1,5 +1,5 @@
 // =============================
-// Football Signup — MAIN.JS (FINAL VERSION)
+// Football Signup — MAIN.JS (FINAL STABLE VERSION)
 // =============================
 
 // ---------- Config ----------
@@ -22,7 +22,7 @@ const LON = -0.1997028625644069;
 let players = [];
 let pollingPausedUntil = 0;
 let isSyncing = false;
-let pendingJoinName = null; // protects your optimistic join
+let pendingJoinName = null; // protects optimistic join
 
 // ---------- DOM helpers ----------
 const el = (id) => document.getElementById(id);
@@ -321,39 +321,47 @@ function wireJoinButton() {
 
   joinBtn.onclick = async () => {
 
-    // Prevent double joins
-  if (pendingJoinName) {
-    setMsg("Please wait… your previous join is still being processed.", true);
-    return;
-  }
-    
-    const name = input.value.trim();
-    if (!name) {
-      setMsg("Please enter your name.", true);
+    joinBtn.disabled = true; // disable instantly to prevent double joins
+
+    // Prevent double joins if one is still pending
+    if (pendingJoinName) {
+      setMsg("Please wait… your previous join is still being processed.", true);
+      joinBtn.disabled = false;
       return;
     }
 
-    pendingJoinName = name; // protect optimistic join
+    const name = input.value.trim();
+    if (!name) {
+      setMsg("Please enter your name.", true);
+      joinBtn.disabled = false;
+      return;
+    }
+
+    pendingJoinName = name;
 
     pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
     setMsg("");
 
     setSyncing(true);
-    joinBtn.disabled = true;
 
     const result = await joinPlayerOnServer(name);
 
-    joinBtn.disabled = false;
     setSyncing(false);
 
-    if (!result) return;
-    
-// Clear pending join immediately on success
-pendingJoinName = null;
-    
+    if (!result) {
+      pendingJoinName = null;
+      joinBtn.disabled = false;
+      return;
+    }
+
+    // Success
+    pendingJoinName = null;
+
     players = Array.isArray(result.players) ? result.players : [];
     renderPlayers(players);
     input.value = "";
+
+    joinBtn.disabled = false;
 
     pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
 
@@ -387,5 +395,3 @@ if (weatherLine) {
 wireJoinButton();
 loadPlayersFromServer(false);
 loadWeatherAt3pm(gameDate);
-
-
