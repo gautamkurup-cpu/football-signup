@@ -4,24 +4,35 @@ function store() {
   return getStore("football-signup");
 }
 
+// Return BOTH state + version metadata
 export async function getState() {
   const s = store();
-  const state = await s.get("state", { type: "json" }).catch(() => null);
 
-  if (state) return state;
+  // getWithMetadata gives us version for atomic writes
+  const result = await s.getWithMetadata("state", { type: "json" }).catch(() => null);
 
+  if (result?.value) {
+    return {
+      state: result.value,
+      version: result.metadata?.version
+    };
+  }
+
+  // Initialise if missing
   const initial = { players: [] };
-  await s.set("state", JSON.stringify(initial), {
+  const metadata = await s.set("state", JSON.stringify(initial), {
     metadata: { contentType: "application/json" }
   });
 
-  return initial;
+  return { state: initial, version: metadata.version };
 }
 
-export async function saveState(state) {
+// Atomic write using ifMatch
+export async function saveState(state, version) {
   const s = store();
-  await s.set("state", JSON.stringify(state), {
-    metadata: { contentType: "application/json" }
+
+  return await s.set("state", JSON.stringify(state), {
+    metadata: { contentType: "application/json" },
+    ifMatch: version // <--- atomic compare-and-set
   });
-  return state;
 }
