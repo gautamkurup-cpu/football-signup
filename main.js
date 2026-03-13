@@ -154,11 +154,20 @@ function renderPlayers(list) {
   const full = list.length >= MAX_PLAYERS;
 
   if (joinBtn) joinBtn.disabled = full;
-  if (nameInput) nameInput.disabled = full;
+
+  // Avoid disabling input while user is typing
+  if (nameInput && document.activeElement !== nameInput) {
+    nameInput.disabled = full;
+  }
 
   if (full) {
     setMsg(`Game is full – ${MAX_PLAYERS}/${MAX_PLAYERS} ✅`, false);
   }
+}
+
+// ---------- Array diff helper ----------
+function arraysEqual(a, b) {
+  return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
 // ---------- Shared backend calls ----------
@@ -169,8 +178,14 @@ async function loadPlayersFromServer(showIndicator = false) {
     const res = await fetch(`/api/state?ts=${Date.now()}`, { cache: "no-store" });
     const data = await res.json();
 
-    players = Array.isArray(data.players) ? data.players : [];
-    renderPlayers(players);
+    const newPlayers = Array.isArray(data.players) ? data.players : [];
+
+    // Only re-render if the list actually changed
+    if (!arraysEqual(players, newPlayers)) {
+      players = newPlayers;
+      renderPlayers(players);
+    }
+
   } catch {
   } finally {
     if (showIndicator) setSyncing(false);
