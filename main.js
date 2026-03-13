@@ -352,6 +352,13 @@ setInterval(() => {
 // ---------- Init ----------
 const gameDate = renderNextGameDate();
 renderLocation();
+// Fix weather label font size (Weather (3pm))
+const weatherLine = document.querySelector("#weatherText")?.parentElement;
+if (weatherLine) {
+  weatherLine.style.fontSize = "16px";
+  weatherLine.style.fontWeight = "500";
+}
 wireJoinButton();
 loadPlayersFromServer(false);
 loadWeatherAt3pm(gameDate);
+
