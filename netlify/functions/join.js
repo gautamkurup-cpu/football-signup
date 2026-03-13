@@ -9,32 +9,30 @@ export default async (req) => {
       return Response.json({ error: "Name required" }, { status: 400 });
     }
 
-    // Read state + version
-    let { state, version } = await getState();
+    // Try up to 2 times to mitigate races
+    let state;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      state = await getState();
 
-    // Prevent duplicates
-    if (!state.players.includes(name)) {
-      state.players.push(name);
-    }
-
-    // Try atomic write
-    const result = await saveState(state, version).catch(() => null);
-
-    if (!result) {
-      // Write failed due to race — retry once
-      let retry = await getState();
-
-      if (!retry.state.players.includes(name)) {
-        retry.state.players.push(name);
+      // Prevent duplicates
+      if (!Array.isArray(state.players)) {
+        state.players = [];
+      }
+      if (!state.players.includes(name)) {
+        state.players = [...state.players, name];
       }
 
-      await saveState(retry.state, retry.version);
+      await saveState(state);
 
-      return Response.json(retry.state);
+      // Re-read to confirm
+      const confirm = await getState();
+      if (Array.isArray(confirm.players) && confirm.players.includes(name)) {
+        state = confirm;
+        break;
+      }
     }
 
     return Response.json(state);
-
   } catch (err) {
     return Response.json(
       { error: err?.message || String(err) },
