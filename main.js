@@ -189,7 +189,13 @@ async function loadPlayersFromServer(showIndicator = false) {
     const data = await res.json();
 
     const newPlayers = Array.isArray(data.players) ? data.players : [];
-
+    
+// --- Prevent flicker: ignore stale server updates that remove local optimistic entries ---
+for (const p of players) {
+  if (!newPlayers.includes(p)) {
+    return; // stale server read → ignore
+  }
+}
     // --- Smart full-list protection ---
     if (players.length >= MAX_PLAYERS && newPlayers.length >= MAX_PLAYERS) {
       return;
@@ -361,4 +367,5 @@ if (weatherLine) {
 wireJoinButton();
 loadPlayersFromServer(false);
 loadWeatherAt3pm(gameDate);
+
 
