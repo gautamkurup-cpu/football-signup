@@ -165,7 +165,10 @@ function renderPlayers(list) {
   const nameInput = el("nameInput");
   const full = list.length >= MAX_PLAYERS;
 
-  if (joinBtn) joinBtn.disabled = full;
+  // IMPORTANT: Do NOT re-enable join button if a join is in progress
+  if (joinBtn && !joinBtn.hasAttribute("data-joining")) {
+    joinBtn.disabled = full;
+  }
 
   if (nameInput && document.activeElement !== nameInput) {
     nameInput.disabled = full;
@@ -321,11 +324,14 @@ function wireJoinButton() {
 
   joinBtn.onclick = async () => {
 
-    joinBtn.disabled = true; // disable instantly to prevent double joins
+    // 🔒 BUTTON LOCK: disable instantly + lock state
+    joinBtn.setAttribute("data-joining", "1");
+    joinBtn.disabled = true;
 
     // Prevent double joins if one is still pending
     if (pendingJoinName) {
       setMsg("Please wait… your previous join is still being processed.", true);
+      joinBtn.removeAttribute("data-joining");
       joinBtn.disabled = false;
       return;
     }
@@ -333,6 +339,7 @@ function wireJoinButton() {
     const name = input.value.trim();
     if (!name) {
       setMsg("Please enter your name.", true);
+      joinBtn.removeAttribute("data-joining");
       joinBtn.disabled = false;
       return;
     }
@@ -350,6 +357,7 @@ function wireJoinButton() {
 
     if (!result) {
       pendingJoinName = null;
+      joinBtn.removeAttribute("data-joining");
       joinBtn.disabled = false;
       return;
     }
@@ -361,6 +369,8 @@ function wireJoinButton() {
     renderPlayers(players);
     input.value = "";
 
+    // 🔓 Unlock button
+    joinBtn.removeAttribute("data-joining");
     joinBtn.disabled = false;
 
     pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
