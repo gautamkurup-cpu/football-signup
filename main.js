@@ -347,7 +347,10 @@ function wireJoinButton() {
     setSyncing(false);
 
     if (!result) return;
-
+    
+// Clear pending join immediately on success
+pendingJoinName = null;
+    
     players = Array.isArray(result.players) ? result.players : [];
     renderPlayers(players);
     input.value = "";
@@ -384,4 +387,5 @@ if (weatherLine) {
 wireJoinButton();
 loadPlayersFromServer(false);
 loadWeatherAt3pm(gameDate);
+
 
