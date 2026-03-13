@@ -1,13 +1,11 @@
 // =============================
 // Football Signup — MAIN.JS (FULL REPLACEMENT)
-// Shared list + cache-busting + polling guard + stop-at-full + syncing indicator
-// + full location address + Google Maps link + 3pm weather
 // =============================
 
 // ---------- Config ----------
 const MAX_PLAYERS = 14;
 const POLL_INTERVAL_MS = 2000;
-const POLL_PAUSE_AFTER_JOIN_MS = 6000; // extended to avoid stale blob reads
+const POLL_PAUSE_AFTER_JOIN_MS = 6000;
 
 // Location (display + Google Maps)
 const LOCATION_NAME = "The Totteridge Academy";
@@ -111,7 +109,24 @@ function renderNextGameDate() {
 // ---------- Location render ----------
 function renderLocation() {
   const locationText = el("locationText");
-  const html = `${LOCATION_NAME}, ${LOCATION_ADDRESS} <a href="${GOOGLE_MAPS_URL}" target="_blank" rel="noopener noreferrer">(map)</a>`;
+
+  const html = `
+    ${LOCATION_NAME}, ${LOCATION_ADDRESS}
+    <a href="${GOOGLE_MAPS_URL}" target="_blank" rel="noopener noreferrer"
+       style="
+         display:inline-block;
+         margin-left:10px;
+         padding:4px 10px;
+         background:#1a73e8;
+         color:white;
+         border-radius:4px;
+         text-decoration:none;
+         font-size:13px;
+         font-weight:500;
+       ">
+       Open in Google Maps →
+    </a>
+  `;
 
   if (locationText) {
     locationText.innerHTML = html;
@@ -155,7 +170,6 @@ function renderPlayers(list) {
 
   if (joinBtn) joinBtn.disabled = full;
 
-  // Avoid disabling input while user is typing
   if (nameInput && document.activeElement !== nameInput) {
     nameInput.disabled = full;
   }
@@ -180,7 +194,11 @@ async function loadPlayersFromServer(showIndicator = false) {
 
     const newPlayers = Array.isArray(data.players) ? data.players : [];
 
-    // Only re-render if the list actually changed
+    // --- Smart full-list protection ---
+    if (players.length >= MAX_PLAYERS && newPlayers.length >= MAX_PLAYERS) {
+      return;
+    }
+
     if (!arraysEqual(players, newPlayers)) {
       players = newPlayers;
       renderPlayers(players);
@@ -201,7 +219,7 @@ async function joinPlayerOnServer(name) {
 
   if (res.status === 409) {
     const data = await res.json().catch(() => ({}));
-    setMsg(data.error || "Game is full ✅", true);
+    setMsg(data.error || "Game is full", true);
     return null;
   }
 
@@ -293,7 +311,6 @@ function wireJoinButton() {
       return;
     }
 
-    // Pause polling while join is in-flight
     pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
     setMsg("");
 
@@ -307,15 +324,12 @@ function wireJoinButton() {
 
     if (!result) return;
 
-    // Optimistic UI: update immediately
     players = Array.isArray(result.players) ? result.players : [];
     renderPlayers(players);
     input.value = "";
 
-    // Extend freeze window to avoid stale poll overwriting UI
     pollingPausedUntil = Date.now() + POLL_PAUSE_AFTER_JOIN_MS;
 
-    // Optional: confirm canonical state after delay
     setTimeout(() => {
       if (Date.now() >= pollingPausedUntil) loadPlayersFromServer(false);
     }, 800);
@@ -326,14 +340,10 @@ function wireJoinButton() {
 
 // ---------- Polling loop ----------
 setInterval(() => {
-  const full = players.length >= MAX_PLAYERS;
-  if (full) return;
-
   if (Date.now() < pollingPausedUntil) return;
-
   if (isSyncing) return;
 
-  loadPlayersFromServer(false); // silent background sync
+  loadPlayersFromServer(false);
 }, POLL_INTERVAL_MS);
 
 // ---------- Init ----------
