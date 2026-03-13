@@ -114,24 +114,13 @@ function renderLocation() {
     ${LOCATION_NAME}, ${LOCATION_ADDRESS}
     <a href="${GOOGLE_MAPS_URL}" target="_blank" rel="noopener noreferrer"
        style="
-         display:inline-flex;
-         align-items:center;
-         gap:6px;
-         margin-left:12px;
-         padding:6px 14px;
-         background:#1a73e8;
-         color:white;
-         border-radius:6px;
+         margin-left:10px;
+         color:#1a73e8;
          text-decoration:none;
          font-size:14px;
          font-weight:500;
-         transition:background 0.2s ease;
-       "
-       onmouseover="this.style.background='#1664c4'"
-       onmouseout="this.style.background='#1a73e8'"
-    >
-       <span style="font-size:16px;">📍</span>
-       Open in Google Maps
+       ">
+       📍 Open in Google Maps
     </a>
   `;
 
