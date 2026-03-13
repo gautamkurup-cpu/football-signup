@@ -305,7 +305,6 @@ async function loadWeatherAt3pm(gameDate) {
 
     weatherEl.textContent = `${icon} ${desc}, ${Math.round(temp)}°C`;
 
-    // Weather font fix
     weatherEl.style.fontSize = "16px";
     weatherEl.style.fontWeight = "500";
 
@@ -395,7 +394,6 @@ setInterval(() => {
 const gameDate = renderNextGameDate();
 renderLocation();
 
-// Fix weather label font size
 const weatherLine = document.querySelector("#weatherText")?.parentElement;
 if (weatherLine) {
   weatherLine.style.fontSize = "16px";
