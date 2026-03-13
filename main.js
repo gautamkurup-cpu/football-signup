@@ -320,6 +320,13 @@ function wireJoinButton() {
   if (!joinBtn || !input) return;
 
   joinBtn.onclick = async () => {
+
+    // Prevent double joins
+  if (pendingJoinName) {
+    setMsg("Please wait… your previous join is still being processed.", true);
+    return;
+  }
+    
     const name = input.value.trim();
     if (!name) {
       setMsg("Please enter your name.", true);
@@ -377,3 +384,4 @@ if (weatherLine) {
 wireJoinButton();
 loadPlayersFromServer(false);
 loadWeatherAt3pm(gameDate);
+
