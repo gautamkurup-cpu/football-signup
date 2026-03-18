@@ -44,6 +44,13 @@
           Reset clears the list for everyone immediately.
         </p>
       </div>
+      
+<div class="adminActions">
+  <button id="playerDbBtn">Manage Player Database</button>
+  <p class="muted small">
+    Add, edit, and rate players.
+  </p>
+</div>
 
       <h2>Players</h2>
       <ol id="adminList"></ol>
@@ -51,6 +58,12 @@
       <p id="adminMsg" class="msg"></p>
     </div>
   </div>
+
+  <script>
+  document.getElementById("playerDbBtn").onclick = function () {
+    window.location.href = "playerdb.html";
+  };
+</script>
 
   <script src="admin.js"></script>
 </body>
