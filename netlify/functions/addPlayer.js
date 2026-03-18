@@ -1,27 +1,24 @@
-exports.handler = async (event) => {
+import { getStore } from "@netlify/blobs";
+
+const uuid = () => Math.random().toString(36).substring(2, 10);
+
+export async function handler(event) {
   if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: "Method Not Allowed"
-    };
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const file = path.join(process.cwd(), "data/players.json");
-  const players = JSON.parse(fs.readFileSync(file, "utf8"));
+  const store = getStore("players");
+  const players = await store.get("players.json", { type: "json" }) || [];
 
   const newPlayer = JSON.parse(event.body);
   newPlayer.id = uuid();
 
   players.push(newPlayer);
 
-  fs.writeFileSync(file, JSON.stringify(players, null, 2));
+  await store.set("players.json", players);
 
   return {
     statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type"
-    },
     body: "OK"
   };
-};
+}
