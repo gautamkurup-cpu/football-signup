@@ -1,42 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Player Database (DEV)</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
+  <script defer src="js/players.js"></script>
 </head>
+
 <body>
-  
-  <div id="loginBox" style="margin:20px;">
-    <h2>Admin Login</h2>
-    <input id="adminPass" type="password" placeholder="Enter admin password" />
+
+  <h1>Player Database (DEV)</h1>
+
+  <div id="loginBox">
+    <label>Admin Password</label>
+    <input id="adminPass" type="password">
     <button id="loginBtn">Login</button>
-    <p id="loginMsg"></p>
+    <div id="loginMsg"></div>
   </div>
 
-  <div id="adminPanel" style="display:none; margin:20px;">
-    <h2>Player Database (DEV)</h2>
-    <p id="adminMsg"></p>
+  <div id="adminPanel" style="display:none;">
 
-    <h3>Add / Edit Player</h3>
-    <div style="display:flex; flex-direction:column; gap:8px; max-width:300px;">
-      <input id="pName" placeholder="Name" />
+    <h2>Add / Edit Player</h2>
 
-      <input id="pPace" type="number" min="1" max="10" placeholder="Pace (1–10)" />
-      <input id="pShooting" type="number" min="1" max="10" placeholder="Shooting (1–10)" />
-      <input id="pBallControl" type="number" min="1" max="10" placeholder="Ball Control (1–10)" />
-      <input id="pPassing" type="number" min="1" max="10" placeholder="Passing (1–10)" />
-      <input id="pDefending" type="number" min="1" max="10" placeholder="Defending (1–10)" />
-      <input id="pPhysical" type="number" min="1" max="10" placeholder="Physical (1–10)" />
+    <div class="formGrid">
 
-      <textarea id="pNotes" placeholder="Notes (optional)"></textarea>
+      <label>Name</label>
+      <input id="pName" type="text">
 
-      <button id="savePlayerBtn">Save Player</button>
-      <button id="cancelEditBtn" style="display:none;">Cancel Edit</button>
+      <label>Pace (1–10)</label>
+      <input id="pPace" type="number" min="1" max="10">
+
+      <label>Shooting (1–10)</label>
+      <input id="pShooting" type="number" min="1" max="10">
+
+      <label>Ball Control (1–10)</label>
+      <input id="pBallControl" type="number" min="1" max="10">
+
+      <label>Passing (1–10)</label>
+      <input id="pPassing" type="number" min="1" max="10">
+
+      <label>Defending (1–10)</label>
+      <input id="pDefending" type="number" min="1" max="10">
+
+      <label>Physical (1–10)</label>
+      <input id="pPhysical" type="number" min="1" max="10">
+
+      <label>Goalkeeping (1–10)</label>
+      <input id="pGoalkeeping" type="number" min="1" max="10">
+
     </div>
 
-    <h3 style="margin-top:30px;">Players</h3>
-    <table border="1" cellpadding="6" style="border-collapse:collapse;">
+    <button id="savePlayerBtn">Save Player</button>
+    <button id="cancelEditBtn" style="display:none;">Cancel Edit</button>
+    <div id="adminMsg"></div>
+
+    <h2>Players</h2>
+
+    <table>
       <thead>
         <tr>
           <th>Name</th>
@@ -46,16 +66,15 @@
           <th>Passing</th>
           <th>Defending</th>
           <th>Physical</th>
-          <th>Notes</th>
+          <th>Goalkeeping</th>
           <th>Edit</th>
           <th>Delete</th>
         </tr>
       </thead>
       <tbody id="playersTable"></tbody>
     </table>
+
   </div>
 
-  <script src="js/players.js"></script>
 </body>
 </html>
-
