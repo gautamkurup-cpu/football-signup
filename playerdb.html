@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Player Database</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="card">
+    <h1>Player Database</h1>
+    <p class="muted">Add, edit, and manage player attributes</p>
+
+    <!-- Add Player Form -->
+    <h2>Add Player</h2>
+    <div class="joinBox">
+      <input id="name" placeholder="Player name" />
+      <input id="ballControl" type="number" placeholder="Ball Control (1-10)" />
+      <input id="shooting" type="number" placeholder="Shooting (1-10)" />
+      <input id="passing" type="number" placeholder="Passing (1-10)" />
+      <input id="defending" type="number" placeholder="Defending (1-10)" />
+      <input id="physicality" type="number" placeholder="Physicality (1-10)" />
+      <input id="workRate" type="number" placeholder="Work Rate (1-10)" />
+      <input id="goalkeeping" type="number" placeholder="Goalkeeping (1-10)" />
+      <button id="addBtn">Add Player</button>
+      <p id="addMsg" class="msg"></p>
+    </div>
+
+    <!-- Player List -->
+    <h2>All Players</h2>
+    <table id="playerTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>BC</th>
+          <th>SH</th>
+          <th>PA</th>
+          <th>DF</th>
+          <th>PH</th>
+          <th>WR</th>
+          <th>GK</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="playerBody"></tbody>
+    </table>
+
+    <p id="dbMsg" class="msg"></p>
+  </div>
+
+  <script src="playerdb.js"></script>
+</body>
+</html>
