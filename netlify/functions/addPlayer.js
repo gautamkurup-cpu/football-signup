@@ -1,9 +1,11 @@
-const fs = require("fs");
-const path = require("path");
-
-const uuid = () => Math.random().toString(36).substring(2, 10);
-
 exports.handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      body: "Method Not Allowed"
+    };
+  }
+
   const file = path.join(process.cwd(), "data/players.json");
   const players = JSON.parse(fs.readFileSync(file, "utf8"));
 
