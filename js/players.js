@@ -1,5 +1,6 @@
 let adminSecret = "";
 let editingId = null;
+let loggedIn = false; // NEW — persist login state
 
 const el = (id) => document.getElementById(id);
 
@@ -118,6 +119,12 @@ async function savePlayer() {
   editingId = null;
   el("cancelEditBtn").style.display = "none";
   clearForm();
+
+  // NEW — ensure admin panel stays visible after saving
+  if (loggedIn) {
+    el("adminPanel").style.display = "block";
+  }
+
   await refresh();
   setAdminMsg("Saved");
 }
@@ -176,6 +183,8 @@ el("loginBtn").onclick = async () => {
     setLoginMsg("Enter password", true);
     return;
   }
+
+  loggedIn = true; // NEW — persist login state
 
   el("loginBox").style.display = "none";
   el("adminPanel").style.display = "block";
