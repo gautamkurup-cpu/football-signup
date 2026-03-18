@@ -4,29 +4,21 @@ function store() {
   return getStore("football-signup");
 }
 
-async function getState() {
+async function get(key, fallback) {
   const s = store();
-  const state = await s.get("state", { type: "json" }).catch(() => null);
-
-  if (state) return state;
-
-  const initial = { players: [] };
-  await s.set("state", JSON.stringify(initial), {
-    metadata: { contentType: "application/json" }
-  });
-
-  return initial;
+  const value = await s.get(key, { type: "json" }).catch(() => null);
+  return value ?? fallback;
 }
 
-async function saveState(state) {
+async function set(key, value) {
   const s = store();
-  await s.set("state", JSON.stringify(state), {
+  await s.set(key, JSON.stringify(value), {
     metadata: { contentType: "application/json" }
   });
-  return state;
+  return value;
 }
 
 module.exports = {
-  getState,
-  saveState
+  get,
+  set
 };
