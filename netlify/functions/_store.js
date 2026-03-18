@@ -1,3 +1,5 @@
+console.log("LOADED NEW STORE");
+
 const { getStore } = require("@netlify/blobs");
 
 function store() {
