@@ -37,7 +37,7 @@ function renderPlayers(players) {
       <td>${p.passing}</td>
       <td>${p.defending}</td>
       <td>${p.physical}</td>
-      <td>${p.notes || ""}</td>
+      <td>${p.goalkeeping}</td>
       <td><button data-edit="${p.id}">Edit</button></td>
       <td><button data-del="${p.id}">Delete</button></td>
     `;
@@ -68,14 +68,23 @@ function getFormData() {
     passing: Number(el("pPassing").value),
     defending: Number(el("pDefending").value),
     physical: Number(el("pPhysical").value),
-    notes: el("pNotes").value.trim()
+    goalkeeping: Number(el("pGoalkeeping").value)
   };
 }
 
 function validatePlayer(p) {
   if (!p.name) return "Name required";
 
-  const nums = ["pace", "shooting", "ballControl", "passing", "defending", "physical"];
+  const nums = [
+    "pace",
+    "shooting",
+    "ballControl",
+    "passing",
+    "defending",
+    "physical",
+    "goalkeeping"
+  ];
+
   for (const k of nums) {
     if (isNaN(p[k]) || p[k] < 1 || p[k] > 10) return `${k} must be 1–10`;
   }
@@ -121,7 +130,7 @@ function clearForm() {
   el("pPassing").value = "";
   el("pDefending").value = "";
   el("pPhysical").value = "";
-  el("pNotes").value = "";
+  el("pGoalkeeping").value = "";
 }
 
 async function startEdit(id) {
@@ -138,7 +147,7 @@ async function startEdit(id) {
   el("pPassing").value = p.passing;
   el("pDefending").value = p.defending;
   el("pPhysical").value = p.physical;
-  el("pNotes").value = p.notes || "";
+  el("pGoalkeeping").value = p.goalkeeping;
 
   el("cancelEditBtn").style.display = "block";
 }
