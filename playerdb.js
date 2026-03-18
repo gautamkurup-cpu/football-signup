@@ -39,6 +39,7 @@ document.getElementById("addBtn").onclick = async () => {
 
   await fetch("/.netlify/functions/addPlayer", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(player)
   });
 
