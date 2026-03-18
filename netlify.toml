@@ -1,3 +1,6 @@
+  [blobs]
+  enabled = true
+  
 [build]
   publish = "."
   functions = "netlify/functions"
@@ -7,6 +10,5 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-  [blobs]
-  enabled = true
+
 
