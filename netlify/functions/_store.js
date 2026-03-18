@@ -1,22 +1,28 @@
-console.log("LOADED NEW STORE");
+const fs = require("fs");
+const path = require("path");
 
-const { getStore } = require("@netlify/blobs");
+const DATA_FILE = path.join(__dirname, "players-dev.json");
 
-function store() {
-  return getStore("football-signup");
+// Ensure file exists
+function ensureFile() {
+  if (!fs.existsSync(DATA_FILE)) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify([]));
+  }
 }
 
 async function get(key, fallback) {
-  const s = store();
-  const value = await s.get(key, { type: "json" }).catch(() => null);
-  return value ?? fallback;
+  ensureFile();
+  try {
+    const raw = fs.readFileSync(DATA_FILE, "utf8");
+    return JSON.parse(raw);
+  } catch (e) {
+    return fallback;
+  }
 }
 
 async function set(key, value) {
-  const s = store();
-  await s.set(key, JSON.stringify(value), {
-    metadata: { contentType: "application/json" }
-  });
+  ensureFile();
+  fs.writeFileSync(DATA_FILE, JSON.stringify(value, null, 2));
   return value;
 }
 
