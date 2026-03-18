@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 exports.handler = async (event) => {
-  const file = path.join(__dirname, "../../data/players.json");
+  const file = path.join(process.cwd(), "data/players.json");
   const players = JSON.parse(fs.readFileSync(file, "utf8"));
 
   const updated = JSON.parse(event.body);
