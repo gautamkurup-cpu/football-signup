@@ -1,6 +1,3 @@
-  [blobs]
-  enabled = true
-  
 [build]
   publish = "."
   functions = "netlify/functions"
