@@ -1,11 +1,11 @@
-const store = require("./_store");
+import { getState, saveState } from "./_store.js";
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const method = event.httpMethod;
 
   // GET — return all players
   if (method === "GET") {
-    const players = await store.get("players-dev", []);
+    const { players } = await getState();
     return {
       statusCode: 200,
       body: JSON.stringify(players)
@@ -26,7 +26,7 @@ exports.handler = async (event) => {
   }
 
   // Load existing players
-  let players = await store.get("players-dev", []);
+  let { players } = await getState();
 
   // POST — create new player
   if (method === "POST") {
@@ -43,7 +43,7 @@ exports.handler = async (event) => {
     };
 
     players.push(newPlayer);
-    await store.set("players-dev", players);
+    await saveState({ players });
 
     return {
       statusCode: 200,
@@ -70,7 +70,7 @@ exports.handler = async (event) => {
       goalkeeping: body.goalkeeping
     };
 
-    await store.set("players-dev", players);
+    await saveState({ players });
 
     return {
       statusCode: 200,
@@ -81,7 +81,7 @@ exports.handler = async (event) => {
   // DELETE — remove player
   if (method === "DELETE") {
     players = players.filter((p) => p.id !== body.id);
-    await store.set("players-dev", players);
+    await saveState({ players });
 
     return {
       statusCode: 200,
