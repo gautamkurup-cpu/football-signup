@@ -16,7 +16,7 @@ function setAdminMsg(t, err = false) {
 }
 
 async function loadPlayers() {
-  const res = await fetch(`/api/players-v1?ts=${Date.now()}`, { cache: "no-store" });
+  const res = await fetch(`/api/players-dev?ts=${Date.now()}`, { cache: "no-store" });
   return await res.json();
 }
 
@@ -95,7 +95,7 @@ async function savePlayer() {
   const body = { secret: adminSecret, ...data };
   if (editingId) body.id = editingId;
 
-  const res = await fetch("/api/players-v1", {
+  const res = await fetch("/api/players-dev", {
     method,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
@@ -146,7 +146,7 @@ async function startEdit(id) {
 async function deletePlayer(id) {
   if (!confirm("Delete this player?")) return;
 
-  const res = await fetch("/api/players-v1", {
+  const res = await fetch("/api/players-dev", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ secret: adminSecret, id })
@@ -181,4 +181,3 @@ el("cancelEditBtn").onclick = () => {
   clearForm();
   el("cancelEditBtn").style.display = "none";
 };
-
