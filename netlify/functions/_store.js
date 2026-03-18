@@ -1,25 +1,28 @@
-function getEnvKey(key) {
-  return `PLAYER_DB_${key.toUpperCase()}`;
+import { getStore } from "@netlify/blobs";
+
+function store() {
+  // This is your Player DB bucket — separate from signup
+  return getStore("players-dev");
 }
 
-async function get(key, fallback) {
-  const envKey = getEnvKey(key);
-  const raw = process.env[envKey];
-  if (!raw) return fallback;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return fallback;
-  }
+export async function getState() {
+  const s = store();
+  const state = await s.get("state", { type: "json" }).catch(() => null);
+
+  if (state) return state;
+
+  const initial = { players: [] };
+  await s.set("state", JSON.stringify(initial), {
+    metadata: { contentType: "application/json" }
+  });
+
+  return initial;
 }
 
-async function set(key, value) {
-  const envKey = getEnvKey(key);
-  process.env[envKey] = JSON.stringify(value);
-  return value;
+export async function saveState(state) {
+  const s = store();
+  await s.set("state", JSON.stringify(state), {
+    metadata: { contentType: "application/json" }
+  });
+  return state;
 }
-
-module.exports = {
-  get,
-  set
-};
