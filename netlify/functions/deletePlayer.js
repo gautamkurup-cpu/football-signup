@@ -1,15 +1,14 @@
-const fs = require("fs");
-const path = require("path");
+import { getStore } from "@netlify/blobs";
 
-exports.handler = async (event) => {
-  const file = path.join(process.cwd(), "data/players.json");
-  const players = JSON.parse(fs.readFileSync(file, "utf8"));
-
+export async function handler(event) {
   const id = event.queryStringParameters.id;
+
+  const store = getStore("players");
+  const players = await store.get("players.json", { type: "json" }) || [];
 
   const filtered = players.filter(p => p.id !== id);
 
-  fs.writeFileSync(file, JSON.stringify(filtered, null, 2));
+  await store.set("players.json", filtered);
 
   return { statusCode: 200, body: "OK" };
-};
+}
