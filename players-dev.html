@@ -1,80 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Player Database (DEV)</title>
-  <link rel="stylesheet" href="style.css">
-  <script defer src="js/players.js"></script>
-</head>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Pace</th>
+      <th>Shooting</th>
+      <th>Ball Control</th>
+      <th>Passing</th>
+      <th>Defending</th>
+      <th>Physical</th>
+      <th>Goalkeeping</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
 
-<body>
-
-  <h1>Player Database (DEV)</h1>
-
-  <div id="loginBox">
-    <label>Admin Password</label>
-    <input id="adminPass" type="password">
-    <button id="loginBtn">Login</button>
-    <div id="loginMsg"></div>
-  </div>
-
-  <div id="adminPanel" style="display:none;">
-
-    <h2>Add / Edit Player</h2>
-
-    <div class="formGrid">
-
-      <label>Name</label>
-      <input id="pName" type="text">
-
-      <label>Pace (1–10)</label>
-      <input id="pPace" type="number" min="1" max="10">
-
-      <label>Shooting (1–10)</label>
-      <input id="pShooting" type="number" min="1" max="10">
-
-      <label>Ball Control (1–10)</label>
-      <input id="pBallControl" type="number" min="1" max="10">
-
-      <label>Passing (1–10)</label>
-      <input id="pPassing" type="number" min="1" max="10">
-
-      <label>Defending (1–10)</label>
-      <input id="pDefending" type="number" min="1" max="10">
-
-      <label>Physical (1–10)</label>
-      <input id="pPhysical" type="number" min="1" max="10">
-
-      <label>Goalkeeping (1–10)</label>
-      <input id="pGoalkeeping" type="number" min="1" max="10">
-
-    </div>
-
-    <button id="savePlayerBtn">Save Player</button>
-    <button id="cancelEditBtn" style="display:none;">Cancel Edit</button>
-    <div id="adminMsg"></div>
-
-    <h2>Players</h2>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Pace</th>
-          <th>Shooting</th>
-          <th>Ball Control</th>
-          <th>Passing</th>
-          <th>Defending</th>
-          <th>Physical</th>
-          <th>Goalkeeping</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="playersTable"></tbody>
-    </table>
-
-  </div>
-
-</body>
-</html>
+  <tbody id="playersTable"></tbody>
+</table>
