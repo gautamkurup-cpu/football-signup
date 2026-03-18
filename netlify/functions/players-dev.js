@@ -1,27 +1,37 @@
-import { getState, saveState } from "./_store.js";
-import { v4 as uuid } from "uuid";
+const store = require("./_store");
 
-export default async (req) => {
-  const method = req.method;
+exports.handler = async (event) => {
+  const method = event.httpMethod;
 
-  // Use a separate key for dev players
-  const state = await getState();
-  state.players_dev = state.players_dev || [];
-
+  // GET — return all players
   if (method === "GET") {
-    return Response.json(state.players_dev);
+    const players = await store.get("players-dev", []);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(players)
+    };
   }
 
-  const body = await req.json().catch(() => ({}));
-  const secret = body.secret;
-
-  if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
-    return new Response("Unauthorized", { status: 401 });
+  // Parse body for POST/PUT/DELETE
+  let body = {};
+  try {
+    body = JSON.parse(event.body || "{}");
+  } catch (e) {
+    return { statusCode: 400, body: "Invalid JSON" };
   }
 
+  // Admin secret check
+  if (body.secret !== process.env.ADMIN_SECRET) {
+    return { statusCode: 401, body: "Unauthorized" };
+  }
+
+  // Load existing players
+  let players = await store.get("players-dev", []);
+
+  // POST — create new player
   if (method === "POST") {
-    const p = {
-      id: uuid(),
+    const newPlayer = {
+      id: Date.now().toString(),
       name: body.name,
       pace: body.pace,
       shooting: body.shooting,
@@ -29,21 +39,27 @@ export default async (req) => {
       passing: body.passing,
       defending: body.defending,
       physical: body.physical,
-      notes: body.notes || ""
+      goalkeeping: body.goalkeeping
     };
 
-    state.players_dev.push(p);
-    await saveState(state);
-    return Response.json(state.players_dev);
+    players.push(newPlayer);
+    await store.set("players-dev", players);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(newPlayer)
+    };
   }
 
+  // PUT — update existing player
   if (method === "PUT") {
-    const id = body.id;
-    const idx = state.players_dev.findIndex((x) => x.id === id);
-    if (idx === -1) return Response.json({ error: "Not found" }, { status: 404 });
+    const idx = players.findIndex((p) => p.id === body.id);
+    if (idx === -1) {
+      return { statusCode: 404, body: "Player not found" };
+    }
 
-    state.players_dev[idx] = {
-      ...state.players_dev[idx],
+    players[idx] = {
+      ...players[idx],
       name: body.name,
       pace: body.pace,
       shooting: body.shooting,
@@ -51,19 +67,27 @@ export default async (req) => {
       passing: body.passing,
       defending: body.defending,
       physical: body.physical,
-      notes: body.notes || ""
+      goalkeeping: body.goalkeeping
     };
 
-    await saveState(state);
-    return Response.json(state.players_dev);
+    await store.set("players-dev", players);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(players[idx])
+    };
   }
 
+  // DELETE — remove player
   if (method === "DELETE") {
-    const id = body.id;
-    state.players_dev = state.players_dev.filter((x) => x.id !== id);
-    await saveState(state);
-    return Response.json(state.players_dev);
+    players = players.filter((p) => p.id !== body.id);
+    await store.set("players-dev", players);
+
+    return {
+      statusCode: 200,
+      body: "Deleted"
+    };
   }
 
-  return new Response("Method Not Allowed", { status: 405 });
+  return { statusCode: 405, body: "Method Not Allowed" };
 };
