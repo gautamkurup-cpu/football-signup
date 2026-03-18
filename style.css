@@ -44,3 +44,12 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 .msg { margin-top: 8px; }
 
 .emptySlot { color: #aaa; }
+
+.club-banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 180px;
+  object-fit: cover;
+}
+
