@@ -1,16 +1,21 @@
-const fs = require("fs");
-const path = require("path");
+import { getStore } from "@netlify/blobs";
 
-exports.handler = async (event) => {
-  const file = path.join(process.cwd(), "data/players.json");
-  const players = JSON.parse(fs.readFileSync(file, "utf8"));
+export async function handler(event) {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method Not Allowed" };
+  }
+
+  const store = getStore("players");
+  const players = await store.get("players.json", { type: "json" }) || [];
 
   const updated = JSON.parse(event.body);
-
   const index = players.findIndex(p => p.id === updated.id);
-  players[index] = updated;
 
-  fs.writeFileSync(file, JSON.stringify(players, null, 2));
+  if (index !== -1) {
+    players[index] = updated;
+  }
+
+  await store.set("players.json", players);
 
   return { statusCode: 200, body: "OK" };
-};
+}
