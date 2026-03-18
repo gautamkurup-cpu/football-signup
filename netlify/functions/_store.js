@@ -1,10 +1,10 @@
-import { getStore } from "@netlify/blobs";
+const { getStore } = require("@netlify/blobs");
 
 function store() {
   return getStore("football-signup");
 }
 
-export async function getState() {
+async function getState() {
   const s = store();
   const state = await s.get("state", { type: "json" }).catch(() => null);
 
@@ -18,10 +18,15 @@ export async function getState() {
   return initial;
 }
 
-export async function saveState(state) {
+async function saveState(state) {
   const s = store();
   await s.set("state", JSON.stringify(state), {
     metadata: { contentType: "application/json" }
   });
   return state;
 }
+
+module.exports = {
+  getState,
+  saveState
+};
