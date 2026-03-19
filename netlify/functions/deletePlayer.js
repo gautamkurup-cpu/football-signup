@@ -1,14 +1,29 @@
-import { getStore } from "@netlify/blobs";
+import { writeToGitHub } from "./githubWrite.js";
 
-export async function handler(event) {
-  const id = event.queryStringParameters.id;
+export default async (request) => {
+  const repo = "gautamkurup-cpu/football-signup";
+  const filePath = "players.json";
+  const token = process.env.GITHUB_TOKEN;
 
-  const store = getStore("players");
-  const players = await store.get("players.json", { type: "json" }) || [];
+  const body = await request.json();
+  const { id } = body;
 
-  const filtered = players.filter(p => p.id !== id);
+  const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
 
-  await store.set("players.json", filtered);
+  if (!getRes.ok) {
+    const errText = await getRes.text();
+    return new Response(JSON.stringify({ error: errText }), { status: 500 });
+  }
 
-  return { statusCode: 200, body: "OK" };
-}
+  const data = await getRes.json();
+  const content = atob(data.content);
+  let players = JSON.parse(content);
+
+  players = players.filter((p) => p.id !== id);
+
+  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2));
+
+  return new Response(JSON.stringify({ success: true }), { status: 200 });
+};
