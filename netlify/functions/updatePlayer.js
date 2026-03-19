@@ -1,21 +1,29 @@
-import { getStore } from "@netlify/blobs";
+import { writeToGitHub } from "./githubWrite.js";
 
-export async function handler(event) {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+export default async (request) => {
+  const repo = "gautamkurup-cpu/football-signup";
+  const filePath = "players.json";
+  const token = process.env.GITHUB_TOKEN;
+
+  const body = await request.json();
+  const { id, updates } = body;
+
+  const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  if (!getRes.ok) {
+    const errText = await getRes.text();
+    return new Response(JSON.stringify({ error: errText }), { status: 500 });
   }
 
-  const store = getStore("players");
-  const players = await store.get("players.json", { type: "json" }) || [];
+  const data = await getRes.json();
+  const content = atob(data.content);
+  let players = JSON.parse(content);
 
-  const updated = JSON.parse(event.body);
-  const index = players.findIndex(p => p.id === updated.id);
+  players = players.map((p) => (p.id === id ? { ...p, ...updates } : p));
 
-  if (index !== -1) {
-    players[index] = updated;
-  }
+  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2));
 
-  await store.set("players.json", players);
-
-  return { statusCode: 200, body: "OK" };
-}
+  return new Response(JSON.stringify({ success: true }), { status: 200 });
+};
