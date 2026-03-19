@@ -1,11 +1,29 @@
-import { getStore } from "@netlify/blobs";
+export default async () => {
+  const repo = "gautamkurup-cpu/football-signup";
+  const filePath = "players.json";
+  const token = process.env.GITHUB_TOKEN;
 
-export async function handler() {
-  const store = getStore("players");
-  const data = await store.get("players.json", { type: "json" }) || [];
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(data)
-  };
-}
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (res.status === 404) {
+      // File doesn't exist yet → treat as empty list
+      return new Response(JSON.stringify([]), { status: 200 });
+    }
+
+    if (!res.ok) {
+      const errText = await res.text();
+      return new Response(JSON.stringify({ error: errText }), { status: 500 });
+    }
+
+    const data = await res.json();
+    const content = atob(data.content);
+    return new Response(content, { status: 200 });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+  }
+};
