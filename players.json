@@ -180,5 +180,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "99d8c928-0e77-4d07-9502-b4475b90151e",
+    "name": "Karan",
+    "attributes": {
+      "forward": 2,
+      "mid": 2,
+      "defence": 4,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
