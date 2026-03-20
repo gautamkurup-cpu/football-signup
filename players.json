@@ -310,5 +310,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "16f3bf5f-37ee-4a5e-a52e-c22408524718",
+    "name": "Bhaskar",
+    "attributes": {
+      "forward": 1,
+      "mid": 1,
+      "defence": 1,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "FWD"
+    }
   }
 ]
