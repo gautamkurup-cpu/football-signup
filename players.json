@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "9bf98c00-41da-4be1-a978-0abdc152c2cf",
+    "name": "Gautam",
+    "attributes": {
+      "ballControl": 7,
+      "pace": 6,
+      "shooting": 5,
+      "passing": 7,
+      "defending": 6,
+      "workRate": 5,
+      "goalKeeping": 1
+    },
+    "computed": {
+      "forwardScore": 18,
+      "midScore": 19,
+      "defenderScore": 18,
+      "goalkeeperScore": 8,
+      "bestPosition": "MID",
+      "overallRating": 15.75
+    }
+  }
+]
