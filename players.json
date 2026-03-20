@@ -19,5 +19,26 @@
       "bestPosition": "FWD",
       "overallRating": 13.75
     }
+  },
+  {
+    "id": "a41c6bd0-2ec1-4135-94f3-014260020399",
+    "name": "test12",
+    "attributes": {
+      "ballControl": 5,
+      "pace": 5,
+      "shooting": 5,
+      "passing": 5,
+      "defending": 5,
+      "workRate": 5,
+      "goalKeeping": 5
+    },
+    "computed": {
+      "forwardScore": 15,
+      "midScore": 15,
+      "defenderScore": 15,
+      "goalkeeperScore": 10,
+      "bestPosition": "FWD",
+      "overallRating": 13.75
+    }
   }
 ]
