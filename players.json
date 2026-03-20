@@ -76,5 +76,18 @@
     "computed": {
       "bestPosition": "MID"
     }
+  },
+  {
+    "id": "4170854d-db99-42ad-aa6b-513e5758aac2",
+    "name": "Ruben",
+    "attributes": {
+      "forward": 5,
+      "mid": 8,
+      "defence": 9,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
