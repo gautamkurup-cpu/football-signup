@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "id": "ccb64aa6-a02f-46e0-be4c-19c24e16da29",
+    "name": "Test",
+    "attributes": {
+      "ballControl": 5,
+      "pace": 5,
+      "shooting": 5,
+      "passing": 5,
+      "defending": 5,
+      "workRate": 5,
+      "goalKeeping": 5
+    },
+    "computed": {
+      "forwardScore": 15,
+      "midScore": 15,
+      "defenderScore": 15,
+      "goalkeeperScore": 10,
+      "bestPosition": "FWD",
+      "overallRating": 13.75
+    }
+  }
+]
