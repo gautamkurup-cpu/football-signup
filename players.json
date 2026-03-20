@@ -11,5 +11,18 @@
     "computed": {
       "bestPosition": "MID"
     }
+  },
+  {
+    "id": "d34f7a8c-7590-4fe0-bb42-35b58b192298",
+    "name": "Sid",
+    "attributes": {
+      "forward": 7,
+      "mid": 7,
+      "defence": 5,
+      "gk": 2
+    },
+    "computed": {
+      "bestPosition": "FWD"
+    }
   }
 ]
