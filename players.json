@@ -141,5 +141,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "8f3b46eb-4161-4430-9d47-3a67bd257d52",
+    "name": "Daniel",
+    "attributes": {
+      "forward": 6.5,
+      "mid": 5.5,
+      "defence": 1,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "FWD"
+    }
   }
 ]
