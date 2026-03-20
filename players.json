@@ -229,5 +229,26 @@
       "bestPosition": "DEF",
       "overallRating": 16
     }
+  },
+  {
+    "id": "874fb941-9402-405f-b383-21dfcb52a7dd",
+    "name": "Kiran",
+    "attributes": {
+      "ballControl": 4,
+      "pace": 1,
+      "shooting": 1,
+      "passing": 3,
+      "defending": 3,
+      "workRate": 3,
+      "goalKeeping": 5
+    },
+    "computed": {
+      "forwardScore": 6,
+      "midScore": 10,
+      "defenderScore": 10,
+      "goalkeeperScore": 13,
+      "bestPosition": "GK",
+      "overallRating": 9.75
+    }
   }
 ]
