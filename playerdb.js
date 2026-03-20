@@ -22,7 +22,12 @@ async function loadPlayers() {
       <td>${a.goalKeeping}</td>
       <td>${c.bestPosition}</td>
       <td>${c.overallRating}</td>
-      <td><button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button></td>
+      <td>
+        <button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button>
+      </td>
+      <td>
+        <button class="delete-btn" onclick="deletePlayer('${player.id}')">Delete</button>
+      </td>
     `;
 
     tbody.appendChild(tr);
@@ -30,8 +35,18 @@ async function loadPlayers() {
 }
 
 function editPlayer(id) {
-  // We will build editplayer.html next
   window.location.href = `editplayer.html?id=${id}`;
+}
+
+async function deletePlayer(id) {
+  if (!confirm("Delete this player?")) return;
+
+  await fetch("/.netlify/functions/deletePlayer", {
+    method: "POST",
+    body: JSON.stringify({ id })
+  });
+
+  loadPlayers(); // refresh table
 }
 
 loadPlayers();
