@@ -37,5 +37,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "6d1e5c3b-36e5-4a9a-b6cf-e01011a2d7a5",
+    "name": "KK",
+    "attributes": {
+      "forward": 3,
+      "mid": 1,
+      "defence": 1,
+      "gk": 7
+    },
+    "computed": {
+      "bestPosition": "GK"
+    }
   }
 ]
