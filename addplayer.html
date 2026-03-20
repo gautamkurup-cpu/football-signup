@@ -11,24 +11,26 @@
 <body>
   <div class="card">
     <h1>Add Player</h1>
-    <p class="muted">Enter player attributes (1–10)</p>
+    <p class="muted">Enter player ratings (1–10, decimals allowed)</p>
 
     <div class="joinBox">
+      <!-- Player Name -->
       <input id="name" placeholder="Player name" />
 
-      <input id="ballControl" type="number" placeholder="Ball Control" min="1" max="10" />
-      <input id="pace" type="number" placeholder="Pace" min="1" max="10" />
-      <input id="shooting" type="number" placeholder="Shooting" min="1" max="10" />
-      <input id="passing" type="number" placeholder="Passing" min="1" max="10" />
-      <input id="defending" type="number" placeholder="Defending" min="1" max="10" />
-      <input id="workRate" type="number" placeholder="Work Rate" min="1" max="10" />
-      <input id="goalKeeping" type="number" placeholder="Goal Keeping" min="1" max="10" />
+      <!-- New Rating Inputs -->
+      <input id="forward" type="number" step="0.1" min="1" max="10" placeholder="Forward Rating" />
+      <input id="mid" type="number" step="0.1" min="1" max="10" placeholder="Midfield Rating" />
+      <input id="defence" type="number" step="0.1" min="1" max="10" placeholder="Defence Rating" />
+      <input id="gk" type="number" step="0.1" min="1" max="10" placeholder="Goalkeeper Rating" />
 
+      <!-- Submit -->
       <button id="addBtn">Add Player</button>
       <p id="addMsg" class="msg"></p>
     </div>
 
-    <button onclick="window.location.href='playerdb.html'" class="backBtn">← Back to Player Database</button>
+    <button onclick="window.location.href='playerdb.html'" class="backBtn">
+      ← Back to Player Database
+    </button>
   </div>
 
   <script src="addplayer.js"></script>
