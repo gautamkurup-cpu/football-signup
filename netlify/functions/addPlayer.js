@@ -3,7 +3,7 @@ import { writeToGitHub } from "./githubWrite.js";
 export async function handler(event) {
   const repo = "gautamkurup-cpu/football-signup";
   const filePath = "players.json";
-  const branch = process.env.BRANCH || "main";
+  const branch = process.env.PLAYER_DB_BRANCH || "main";
   const token = process.env.GITHUB_TOKEN;
 
   const body = JSON.parse(event.body);
