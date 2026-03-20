@@ -219,15 +219,15 @@
       "passing": 4,
       "defending": 7,
       "workRate": 8,
-      "goalKeeping": 5
+      "goalKeeping": 1
     },
     "computed": {
       "forwardScore": 15,
       "midScore": 16,
       "defenderScore": 19,
-      "goalkeeperScore": 14,
+      "goalkeeperScore": 6,
       "bestPosition": "DEF",
-      "overallRating": 16
+      "overallRating": 14
     }
   },
   {
