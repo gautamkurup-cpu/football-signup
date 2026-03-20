@@ -68,19 +68,19 @@
     "attributes": {
       "ballControl": 5,
       "pace": 1,
-      "shooting": 5,
+      "shooting": 1,
       "passing": 6,
       "defending": 1,
       "workRate": 1,
       "goalKeeping": 7
     },
     "computed": {
-      "forwardScore": 11,
+      "forwardScore": 7,
       "midScore": 12,
       "defenderScore": 8,
       "goalkeeperScore": 12,
       "bestPosition": "MID",
-      "overallRating": 10.75
+      "overallRating": 9.75
     }
   }
 ]
