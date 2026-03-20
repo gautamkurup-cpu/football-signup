@@ -71,7 +71,14 @@ export async function handler(event) {
 
   players.push(newPlayer);
 
-  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2), sha, branch);
+  await writeToGitHub(
+    repo,
+    filePath,
+    token,
+    JSON.stringify(players, null, 2),
+    sha,
+    branch
+  );
 
   return {
     statusCode: 200,
