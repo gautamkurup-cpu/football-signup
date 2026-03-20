@@ -102,5 +102,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "5ea5ae40-a29e-4720-9302-363084b74cfc",
+    "name": "Kutty",
+    "attributes": {
+      "forward": 7,
+      "mid": 6,
+      "defence": 4,
+      "gk": 4
+    },
+    "computed": {
+      "bestPosition": "FWD"
+    }
   }
 ]
