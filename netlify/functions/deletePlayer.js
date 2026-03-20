@@ -1,29 +1,42 @@
 import { writeToGitHub } from "./githubWrite.js";
 
-export default async (request) => {
+export async function handler(event) {
   const repo = "gautamkurup-cpu/football-signup";
   const filePath = "players.json";
+  const branch = process.env.PLAYER_DB_BRANCH || "main";
   const token = process.env.GITHUB_TOKEN;
 
-  const body = await request.json();
-  const { id } = body;
+  const { id } = JSON.parse(event.body);
 
-  const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
-    headers: { Authorization: `Bearer ${token}` }
+  // Load existing players
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `token ${token}` }
   });
 
-  if (!getRes.ok) {
-    const errText = await getRes.text();
-    return new Response(JSON.stringify({ error: errText }), { status: 500 });
+  let players = [];
+  let sha = null;
+
+  if (res.ok) {
+    const data = await res.json();
+    sha = data.sha;
+    players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
   }
 
-  const data = await getRes.json();
-  const content = atob(data.content);
-  let players = JSON.parse(content);
+  // Remove the player
+  const updated = players.filter(p => p.id !== id);
 
-  players = players.filter((p) => p.id !== id);
+  await writeToGitHub(
+    repo,
+    filePath,
+    token,
+    JSON.stringify(updated, null, 2),
+    sha,
+    branch
+  );
 
-  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2));
-
-  return new Response(JSON.stringify({ success: true }), { status: 200 });
-};
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ success: true })
+  };
+}
