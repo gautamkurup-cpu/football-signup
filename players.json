@@ -115,5 +115,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "64a19d4a-8c60-4379-ae2f-46d66f5bdf97",
+    "name": "Siddhu",
+    "attributes": {
+      "forward": 7.5,
+      "mid": 5,
+      "defence": 5,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "FWD"
+    }
   }
 ]
