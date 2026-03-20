@@ -336,5 +336,18 @@
     "computed": {
       "bestPosition": "MID"
     }
+  },
+  {
+    "id": "9be285cb-ece4-418c-b724-ed22969ec16b",
+    "name": "Vimal",
+    "attributes": {
+      "forward": 1,
+      "mid": 2,
+      "defence": 7.5,
+      "gk": 5
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
