@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { writeToGitHub } from "./githubWrite.js";
 
 export async function handler(event) {
