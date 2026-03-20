@@ -90,18 +90,18 @@
       "ballControl": 5,
       "pace": 6,
       "shooting": 5,
-      "passing": 6,
+      "passing": 5,
       "defending": 9,
       "workRate": 8,
       "goalKeeping": 1
     },
     "computed": {
       "forwardScore": 16,
-      "midScore": 19,
-      "defenderScore": 23,
+      "midScore": 18,
+      "defenderScore": 22,
       "goalkeeperScore": 6,
       "bestPosition": "DEF",
-      "overallRating": 16
+      "overallRating": 15.5
     }
   },
   {
