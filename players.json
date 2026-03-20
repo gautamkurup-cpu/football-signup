@@ -50,5 +50,18 @@
     "computed": {
       "bestPosition": "GK"
     }
+  },
+  {
+    "id": "e6116d92-f824-480f-b35c-0df2fd52f8d1",
+    "name": "Vinay",
+    "attributes": {
+      "forward": 7,
+      "mid": 10,
+      "defence": 10,
+      "gk": 8
+    },
+    "computed": {
+      "bestPosition": "MID"
+    }
   }
 ]
