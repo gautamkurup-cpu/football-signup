@@ -1,0 +1,181 @@
+/* ------------------------------
+   Admin Card Layout
+------------------------------ */
+
+.admin-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  max-width: 1200px;
+  margin: 40px auto;
+  font-family: system-ui, sans-serif;
+}
+
+/* ------------------------------
+   Header Row
+------------------------------ */
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* ------------------------------
+   Search Bar
+------------------------------ */
+
+#searchInput {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+/* ------------------------------
+   Add Player Button
+------------------------------ */
+
+.add-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: #218838;
+}
+
+/* ------------------------------
+   Table Container
+------------------------------ */
+
+.table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+/* ------------------------------
+   Table Styling
+------------------------------ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead th {
+  background: #1e1e1e;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  cursor: pointer; /* enables sortable columns */
+}
+
+tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+tbody tr:hover {
+  background: #f0f0f0;
+}
+
+/* ------------------------------
+   Buttons in Table
+------------------------------ */
+
+.edit-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.edit-btn:hover {
+  background: #0056b3;
+}
+
+.delete-btn {
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.delete-btn:hover {
+  background: #c9302c;
+}
+
+/* ------------------------------
+   Back Button
+------------------------------ */
+
+.backBtn {
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #444;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.backBtn:hover {
+  background: #222;
+}
+
+/* ------------------------------
+   Responsive Layout
+------------------------------ */
+
+@media (max-width: 700px) {
+  table {
+    font-size: 12px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #searchInput {
+    width: 100%;
+  }
+
+  .add-btn {
+    width: 100%;
+  }
+}
