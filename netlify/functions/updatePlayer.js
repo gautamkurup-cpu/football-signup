@@ -20,7 +20,13 @@ export async function handler(event) {
 
   const data = await res.json();
   const sha = data.sha;
-  let players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
+
+  let players = [];
+  try {
+    players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
+  } catch {
+    players = [];
+  }
 
   // Find player
   const idx = players.findIndex(p => p.id === body.id);
@@ -28,47 +34,33 @@ export async function handler(event) {
     return { statusCode: 404, body: "Player not found" };
   }
 
-  // Update attributes
+  // Update player fields
   const updated = players[idx];
   updated.name = body.name;
+
+  // New 4-rating model
   updated.attributes = {
-    ballControl: body.ballControl,
-    pace: body.pace,
-    shooting: body.shooting,
-    passing: body.passing,
-    defending: body.defending,
-    workRate: body.workRate,
-    goalKeeping: body.goalKeeping
+    forward: Number(body.forward),
+    mid: Number(body.mid),
+    defence: Number(body.defence),
+    gk: Number(body.gk)
   };
 
-  // Recompute scores
   const a = updated.attributes;
-  const forwardScore = a.ballControl + a.pace + a.shooting;
-  const midScore = a.ballControl + a.passing + a.workRate;
-  const defenderScore = a.defending + a.workRate + a.ballControl;
-  const goalkeeperScore = (a.goalKeeping*2) + a.passing;
 
-  const bestPosition = (() => {
-    const scores = {
-      FWD: forwardScore,
-      MID: midScore,
-      DEF: defenderScore,
-      GK: goalkeeperScore
-    };
-    return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-  })();
+  // Compute best position (highest rating)
+  const scores = {
+    FWD: a.forward,
+    MID: a.mid,
+    DEF: a.defence,
+    GK: a.gk
+  };
 
-  const overallRating = Number(
-    ((forwardScore + midScore + defenderScore + goalkeeperScore) / 4).toFixed(2)
-  );
+  const bestPosition = Object.entries(scores)
+    .sort((a, b) => b[1] - a[1])[0][0];
 
   updated.computed = {
-    forwardScore,
-    midScore,
-    defenderScore,
-    goalkeeperScore,
-    bestPosition,
-    overallRating
+    bestPosition
   };
 
   players[idx] = updated;
