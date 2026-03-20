@@ -193,5 +193,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "8a7a6452-bb08-4ed9-9c76-7d4882f6286a",
+    "name": "Anoop",
+    "attributes": {
+      "forward": 1,
+      "mid": 2,
+      "defence": 4,
+      "gk": 5
+    },
+    "computed": {
+      "bestPosition": "GK"
+    }
   }
 ]
