@@ -89,5 +89,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "75c25c5a-74b6-46a7-bf50-51f5384331e0",
+    "name": "Jitu",
+    "attributes": {
+      "forward": 2,
+      "mid": 4,
+      "defence": 9,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
