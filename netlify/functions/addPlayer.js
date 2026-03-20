@@ -1,111 +1,80 @@
+import fetch from "node-fetch";
 import { writeToGitHub } from "./githubWrite.js";
 
-export default async (request) => {
+export async function handler(event) {
   const repo = "gautamkurup-cpu/football-signup";
   const filePath = "players.json";
+  const branch = process.env.BRANCH || "main";
   const token = process.env.GITHUB_TOKEN;
 
-  // -----------------------------
-  // 1. Parse incoming request body
-  // -----------------------------
-  const body = await request.json();
+  const body = JSON.parse(event.body);
 
-  const {
-    name,
-    ballControl,
-    pace,
-    shooting,
-    passing,
-    defending,
-    workRate,
-    goalKeeping
-  } = body;
-
-  // -----------------------------
-  // 2. Build attributes object
-  // -----------------------------
-  const attributes = {
-    ballControl,
-    pace,
-    shooting,
-    passing,
-    defending,
-    workRate,
-    goalKeeping
-  };
-
-  // -----------------------------
-  // 3. Compute position scores
-  // -----------------------------
-  const forwardScore = shooting + pace + ballControl;
-  const midScore = passing + workRate + ballControl;
-  const defenderScore = defending + workRate + ballControl;
-  const goalkeeperScore = (goalKeeping * 2) + passing;
-
-  // -----------------------------
-  // 4. Determine best position
-  // -----------------------------
-  const scoreMap = {
-    FWD: forwardScore,
-    MID: midScore,
-    DEF: defenderScore,
-    GK: goalkeeperScore
-  };
-
-  const bestPosition = Object.keys(scoreMap).reduce((a, b) =>
-    scoreMap[a] > scoreMap[b] ? a : b
-  );
-
-  // -----------------------------
-  // 5. Compute overall rating (1–10 scale)
-  // -----------------------------
-  const bestScore = scoreMap[bestPosition];
-  const overallRating = Number(((bestScore / 30) * 10).toFixed(2));
-
-  // -----------------------------
-  // 6. Build final player object
-  // -----------------------------
+  // Build new player object
   const newPlayer = {
     id: crypto.randomUUID(),
-    name,
-    attributes,
-    computed: {
-      forwardScore,
-      midScore,
-      defenderScore,
-      goalkeeperScore,
-      bestPosition,
-      overallRating
+    name: body.name,
+    attributes: {
+      ballControl: body.ballControl,
+      pace: body.pace,
+      shooting: body.shooting,
+      passing: body.passing,
+      defending: body.defending,
+      workRate: body.workRate,
+      goalKeeping: body.goalKeeping
     }
   };
 
-  // -----------------------------
-  // 7. Fetch existing players
-  // -----------------------------
-  const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
-    headers: { Authorization: `Bearer ${token}` }
+  // Compute scores
+  const a = newPlayer.attributes;
+  const forwardScore = a.ballControl + a.pace + a.shooting;
+  const midScore = a.ballControl + a.passing + a.workRate;
+  const defenderScore = a.defending + a.workRate + a.passing;
+  const goalkeeperScore = a.goalKeeping + a.ballControl;
+
+  const bestPosition = (() => {
+    const scores = {
+      FWD: forwardScore,
+      MID: midScore,
+      DEF: defenderScore,
+      GK: goalkeeperScore
+    };
+    return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  })();
+
+  const overallRating = Number(
+    ((forwardScore + midScore + defenderScore + goalkeeperScore) / 4).toFixed(2)
+  );
+
+  newPlayer.computed = {
+    forwardScore,
+    midScore,
+    defenderScore,
+    goalkeeperScore,
+    bestPosition,
+    overallRating
+  };
+
+  // Load existing players
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `token ${token}` }
   });
 
   let players = [];
+  let sha = null;
 
-  if (getRes.status === 200) {
-    const data = await getRes.json();
-    const content = atob(data.content);
-    players = JSON.parse(content);
-  } else if (getRes.status !== 404) {
-    const errText = await getRes.text();
-    return new Response(JSON.stringify({ error: errText }), { status: 500 });
+  if (res.ok) {
+    const data = await res.json();
+    sha = data.sha;
+    players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
   }
 
-  // -----------------------------
-  // 8. Add new player
-  // -----------------------------
   players.push(newPlayer);
 
-  // -----------------------------
-  // 9. Save back to GitHub
-  // -----------------------------
-  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2));
+  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2), sha, branch);
 
-  return new Response(JSON.stringify({ success: true, player: newPlayer }), { status: 200 });
-};
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ success: true })
+  };
+}
