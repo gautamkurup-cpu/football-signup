@@ -27,10 +27,14 @@ document.getElementById("addBtn").onclick = async function () {
     goalKeeping
   };
 
-  const res = await fetch("/.netlify/functions/addPlayer", {
-    method: "POST",
-    body: JSON.stringify(payload)
-  });
+ const res = await fetch("/.netlify/functions/addPlayer", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(payload)
+});
+
 
   const data = await res.json();
 
