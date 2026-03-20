@@ -354,13 +354,13 @@
     "id": "2fabfc0d-8ea2-43be-a363-69253bbc1fff",
     "name": "Prem",
     "attributes": {
-      "forward": 1,
-      "mid": 1,
-      "defence": 1,
+      "forward": 2,
+      "mid": 2,
+      "defence": 3,
       "gk": 1
     },
     "computed": {
-      "bestPosition": "FWD"
+      "bestPosition": "DEF"
     }
   }
 ]
