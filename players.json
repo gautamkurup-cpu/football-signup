@@ -82,5 +82,26 @@
       "bestPosition": "MID",
       "overallRating": 9.75
     }
+  },
+  {
+    "id": "64a56784-ec13-4550-ad60-8399394dd7a9",
+    "name": "Jitu",
+    "attributes": {
+      "ballControl": 5,
+      "pace": 6,
+      "shooting": 5,
+      "passing": 6,
+      "defending": 9,
+      "workRate": 8,
+      "goalKeeping": 1
+    },
+    "computed": {
+      "forwardScore": 16,
+      "midScore": 19,
+      "defenderScore": 23,
+      "goalkeeperScore": 6,
+      "bestPosition": "DEF",
+      "overallRating": 16
+    }
   }
 ]
