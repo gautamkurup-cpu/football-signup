@@ -145,5 +145,26 @@
       "bestPosition": "FWD",
       "overallRating": 14.75
     }
+  },
+  {
+    "id": "90929e36-1218-48d8-85e0-08d435e60590",
+    "name": "Saki",
+    "attributes": {
+      "ballControl": 6,
+      "pace": 5,
+      "shooting": 3,
+      "passing": 6,
+      "defending": 7,
+      "workRate": 7,
+      "goalKeeping": 1
+    },
+    "computed": {
+      "forwardScore": 14,
+      "midScore": 19,
+      "defenderScore": 20,
+      "goalkeeperScore": 8,
+      "bestPosition": "DEF",
+      "overallRating": 15.25
+    }
   }
 ]
