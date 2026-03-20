@@ -219,5 +219,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "ce2438d0-0e57-4986-85c9-b461e837d9b8",
+    "name": "Kiran",
+    "attributes": {
+      "forward": 1,
+      "mid": 1,
+      "defence": 2,
+      "gk": 5
+    },
+    "computed": {
+      "bestPosition": "GK"
+    }
   }
 ]
