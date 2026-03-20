@@ -328,13 +328,13 @@
     "id": "5ed0b855-ea2e-4857-8492-60a8990f236f",
     "name": "Andrew",
     "attributes": {
-      "forward": 9,
-      "mid": 8.5,
-      "defence": 6,
+      "forward": 8.5,
+      "mid": 9.5,
+      "defence": 7,
       "gk": 1
     },
     "computed": {
-      "bestPosition": "FWD"
+      "bestPosition": "MID"
     }
   },
   {
