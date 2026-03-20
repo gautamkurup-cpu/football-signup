@@ -4,24 +4,39 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Player Database</title>
+
+  <!-- Existing styles -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="playerdb.css" />
 </head>
 
 <body>
-  <div class="card">
-    <h1>Player Database</h1>
-    <p class="muted">View and manage all registered players</p>
 
-    <!-- Add Player Button -->
-    <button onclick="window.location.href='addplayer.html'" 
-            class="edit-btn" 
-            style="margin-bottom: 20px;">
-      + Add New Player
-    </button>
+  <!-- Modern Admin Card -->
+  <div class="admin-card">
 
-    <!-- Player Table -->
-    <div id="playerTableContainer" class="playerdb-card">
+    <!-- Header Row -->
+    <div class="admin-header">
+      <h2>Player Database</h2>
+
+      <!-- Search Bar -->
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search players..."
+      />
+
+      <!-- Add Player Button -->
+      <button 
+        class="add-btn" 
+        onclick="window.location.href='addplayer.html'"
+      >
+        + Add New Player
+      </button>
+    </div>
+
+    <!-- Table Container (scrollable) -->
+    <div class="table-container">
       <table id="playerTable">
         <thead>
           <tr>
@@ -36,17 +51,24 @@
             <th>Best Pos</th>
             <th>Overall</th>
             <th>Edit</th>
+            <th>Delete</th>
           </tr>
         </thead>
+
         <tbody id="playerTableBody">
           <!-- JS inserts rows here -->
         </tbody>
       </table>
     </div>
 
-    <button onclick="window.location.href='admin.html'" class="backBtn">← Back to Admin</button>
+    <!-- Back Button -->
+    <button onclick="window.location.href='admin.html'" class="backBtn">
+      ← Back to Admin
+    </button>
+
   </div>
 
+  <!-- JS -->
   <script src="playerdb.js"></script>
 </body>
 </html>
