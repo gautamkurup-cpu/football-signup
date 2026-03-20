@@ -481,5 +481,26 @@
       "bestPosition": "FWD",
       "overallRating": 0
     }
+  },
+  {
+    "id": "a602093a-bce5-47e9-8f7c-43e50203edbb",
+    "name": "Ruben",
+    "attributes": {
+      "ballControl": 0,
+      "pace": 0,
+      "shooting": 0,
+      "passing": 0,
+      "defending": 0,
+      "workRate": 0,
+      "goalKeeping": 0
+    },
+    "computed": {
+      "forwardScore": 0,
+      "midScore": 0,
+      "defenderScore": 0,
+      "goalkeeperScore": 0,
+      "bestPosition": "FWD",
+      "overallRating": 0
+    }
   }
 ]
