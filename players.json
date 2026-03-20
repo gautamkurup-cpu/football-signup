@@ -66,21 +66,21 @@
     "id": "982e6572-5977-4977-ad2f-13c1dfd6d6f1",
     "name": "KK",
     "attributes": {
-      "ballControl": 7,
+      "ballControl": 5,
       "pace": 1,
       "shooting": 5,
-      "passing": 7,
+      "passing": 6,
       "defending": 1,
       "workRate": 1,
       "goalKeeping": 7
     },
     "computed": {
-      "forwardScore": 13,
-      "midScore": 15,
-      "defenderScore": 9,
-      "goalkeeperScore": 14,
+      "forwardScore": 11,
+      "midScore": 12,
+      "defenderScore": 8,
+      "goalkeeperScore": 12,
       "bestPosition": "MID",
-      "overallRating": 12.75
+      "overallRating": 10.75
     }
   }
 ]
