@@ -24,5 +24,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "e471fb13-6be0-499d-b406-3c1b75ba3c5f",
+    "name": "Nithin",
+    "attributes": {
+      "forward": 8,
+      "mid": 6,
+      "defence": 4,
+      "gk": 8
+    },
+    "computed": {
+      "bestPosition": "FWD"
+    }
   }
 ]
