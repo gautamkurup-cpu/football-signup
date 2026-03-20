@@ -166,5 +166,26 @@
       "bestPosition": "DEF",
       "overallRating": 15.25
     }
+  },
+  {
+    "id": "fad07f4c-8d84-4bbc-8bb5-334807ba5815",
+    "name": "Rahul",
+    "attributes": {
+      "ballControl": 9,
+      "pace": 9,
+      "shooting": 8,
+      "passing": 6,
+      "defending": 7,
+      "workRate": 8,
+      "goalKeeping": 1
+    },
+    "computed": {
+      "forwardScore": 26,
+      "midScore": 23,
+      "defenderScore": 24,
+      "goalkeeperScore": 8,
+      "bestPosition": "FWD",
+      "overallRating": 20.25
+    }
   }
 ]
