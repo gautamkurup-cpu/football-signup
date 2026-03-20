@@ -200,11 +200,11 @@
     "attributes": {
       "forward": 1,
       "mid": 2,
-      "defence": 4,
+      "defence": 5,
       "gk": 5
     },
     "computed": {
-      "bestPosition": "GK"
+      "bestPosition": "DEF"
     }
   }
 ]
