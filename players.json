@@ -208,5 +208,26 @@
       "bestPosition": "DEF",
       "overallRating": 14
     }
+  },
+  {
+    "id": "a5e4199d-ca7c-4542-978d-415dc327d25d",
+    "name": "Anoop",
+    "attributes": {
+      "ballControl": 4,
+      "pace": 7,
+      "shooting": 4,
+      "passing": 4,
+      "defending": 7,
+      "workRate": 8,
+      "goalKeeping": 5
+    },
+    "computed": {
+      "forwardScore": 15,
+      "midScore": 16,
+      "defenderScore": 19,
+      "goalkeeperScore": 14,
+      "bestPosition": "DEF",
+      "overallRating": 16
+    }
   }
 ]
