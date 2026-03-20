@@ -19,5 +19,26 @@
       "bestPosition": "MID",
       "overallRating": 15.75
     }
+  },
+  {
+    "id": "b72789b1-2726-4db6-9999-4336fc00f6aa",
+    "name": "Nithin",
+    "attributes": {
+      "ballControl": 7,
+      "pace": 9,
+      "shooting": 8,
+      "passing": 6,
+      "defending": 3,
+      "workRate": 3,
+      "goalKeeping": 8
+    },
+    "computed": {
+      "forwardScore": 24,
+      "midScore": 16,
+      "defenderScore": 12,
+      "goalkeeperScore": 15,
+      "bestPosition": "FWD",
+      "overallRating": 16.75
+    }
   }
 ]
