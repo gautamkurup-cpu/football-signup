@@ -18,13 +18,14 @@ async function loadPlayers() {
   const tbody = document.getElementById("playerTableBody");
   tbody.innerHTML = "";
 
-  players.forEach(player => {
+  players.forEach((player, index) => {
     const tr = document.createElement("tr");
 
     const a = player.attributes;
     const c = player.computed;
 
     tr.innerHTML = `
+      <td>${index + 1}</td>
       <td>${player.name}</td>
       <td>${a.ballControl}</td>
       <td>${a.pace}</td>
