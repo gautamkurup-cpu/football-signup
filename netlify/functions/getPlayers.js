@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export async function handler() {
   const repo = "gautamkurup-cpu/football-signup";
   const filePath = "players.json";
