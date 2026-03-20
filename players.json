@@ -134,8 +134,8 @@
     "name": "Saki",
     "attributes": {
       "forward": 3,
-      "mid": 6,
-      "defence": 7.5,
+      "mid": 5,
+      "defence": 6,
       "gk": 1
     },
     "computed": {
