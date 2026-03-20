@@ -297,5 +297,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "bd45bf9f-64a2-4fac-a54c-dd1a4f21f4c5",
+    "name": "Ashish",
+    "attributes": {
+      "forward": 2,
+      "mid": 2,
+      "defence": 8,
+      "gk": 5
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
