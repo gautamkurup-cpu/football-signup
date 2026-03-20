@@ -167,5 +167,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "a287f87c-bc1e-414d-b6b2-eccd392141d7",
+    "name": "Rahul",
+    "attributes": {
+      "forward": 9,
+      "mid": 8,
+      "defence": 8,
+      "gk": 5
+    },
+    "computed": {
+      "bestPosition": "FWD"
+    }
   }
 ]
