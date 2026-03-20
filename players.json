@@ -523,5 +523,26 @@
       "bestPosition": "FWD",
       "overallRating": 0
     }
+  },
+  {
+    "id": "2dc181ac-0ffc-463f-9a92-d1f68a91d823",
+    "name": "Vimal",
+    "attributes": {
+      "ballControl": 0,
+      "pace": 0,
+      "shooting": 0,
+      "passing": 0,
+      "defending": 0,
+      "workRate": 0,
+      "goalKeeping": 0
+    },
+    "computed": {
+      "forwardScore": 0,
+      "midScore": 0,
+      "defenderScore": 0,
+      "goalkeeperScore": 0,
+      "bestPosition": "FWD",
+      "overallRating": 0
+    }
   }
 ]
