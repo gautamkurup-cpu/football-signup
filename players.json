@@ -56,10 +56,10 @@
     "computed": {
       "forwardScore": 22,
       "midScore": 20,
-      "defenderScore": 17,
+      "defenderScore": 18,
       "goalkeeperScore": 9,
       "bestPosition": "FWD",
-      "overallRating": 17
+      "overallRating": 17.25
     }
   },
   {
