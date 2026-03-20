@@ -323,5 +323,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "5ed0b855-ea2e-4857-8492-60a8990f236f",
+    "name": "Andrew",
+    "attributes": {
+      "forward": 8,
+      "mid": 8.5,
+      "defence": 6,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "MID"
+    }
   }
 ]
