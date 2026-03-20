@@ -284,5 +284,18 @@
     "computed": {
       "bestPosition": "GK"
     }
+  },
+  {
+    "id": "a88c3065-fbaf-476d-9058-d89aaaf99ab2",
+    "name": "Ashik",
+    "attributes": {
+      "forward": 6.5,
+      "mid": 8,
+      "defence": 10,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
