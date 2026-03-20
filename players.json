@@ -250,5 +250,26 @@
       "bestPosition": "GK",
       "overallRating": 9.75
     }
+  },
+  {
+    "id": "5101b9ef-6d3d-4ad5-8804-4870e55773e1",
+    "name": "Kiran Vibhu",
+    "attributes": {
+      "ballControl": 3,
+      "pace": 3,
+      "shooting": 1,
+      "passing": 3,
+      "defending": 3,
+      "workRate": 5,
+      "goalKeeping": 3
+    },
+    "computed": {
+      "forwardScore": 7,
+      "midScore": 11,
+      "defenderScore": 11,
+      "goalkeeperScore": 9,
+      "bestPosition": "MID",
+      "overallRating": 9.5
+    }
   }
 ]
