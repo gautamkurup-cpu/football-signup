@@ -8,52 +8,36 @@ export async function handler(event) {
 
   const body = JSON.parse(event.body);
 
-  // Build new player object
+  // Build new player object with new 4-rating model
   const newPlayer = {
     id: crypto.randomUUID(),
     name: body.name,
     attributes: {
-      ballControl: body.ballControl,
-      pace: body.pace,
-      shooting: body.shooting,
-      passing: body.passing,
-      defending: body.defending,
-      workRate: body.workRate,
-      goalKeeping: body.goalKeeping
+      forward: Number(body.forward),
+      mid: Number(body.mid),
+      defence: Number(body.defence),
+      gk: Number(body.gk)
     }
   };
 
-  // Compute scores
   const a = newPlayer.attributes;
-  const forwardScore = a.ballControl + a.pace + a.shooting;
-  const midScore = a.ballControl + a.passing + a.workRate;
-  const defenderScore = a.defending + a.workRate + a.ballControl;
-  const goalkeeperScore = (a.goalKeeping*2) + a.passing;
 
-  const bestPosition = (() => {
-    const scores = {
-      FWD: forwardScore,
-      MID: midScore,
-      DEF: defenderScore,
-      GK: goalkeeperScore
-    };
-    return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-  })();
-
-  const overallRating = Number(
-    ((forwardScore + midScore + defenderScore + goalkeeperScore) / 4).toFixed(2)
-  );
-
-  newPlayer.computed = {
-    forwardScore,
-    midScore,
-    defenderScore,
-    goalkeeperScore,
-    bestPosition,
-    overallRating
+  // Compute best position (highest of the 4 ratings)
+  const scores = {
+    FWD: a.forward,
+    MID: a.mid,
+    DEF: a.defence,
+    GK: a.gk
   };
 
-  // Load existing players
+  const bestPosition = Object.entries(scores)
+    .sort((a, b) => b[1] - a[1])[0][0];
+
+  newPlayer.computed = {
+    bestPosition
+  };
+
+  // Load existing players (if file exists)
   const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
   const res = await fetch(url, {
     headers: { Authorization: `token ${token}` }
@@ -65,11 +49,18 @@ export async function handler(event) {
   if (res.ok) {
     const data = await res.json();
     sha = data.sha;
-    players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
+
+    try {
+      players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
+    } catch {
+      players = [];
+    }
   }
 
+  // Add new player
   players.push(newPlayer);
 
+  // Write updated file back to GitHub
   await writeToGitHub(
     repo,
     filePath,
