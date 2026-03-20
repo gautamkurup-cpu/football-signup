@@ -45,8 +45,8 @@ export async function handler(event) {
   const a = updated.attributes;
   const forwardScore = a.ballControl + a.pace + a.shooting;
   const midScore = a.ballControl + a.passing + a.workRate;
-  const defenderScore = a.defending + a.workRate + a.passing;
-  const goalkeeperScore = a.goalKeeping + a.ballControl;
+  const defenderScore = a.defending + a.workRate + a.ballControl;
+  const goalkeeperScore = (a.goalKeeping*2) + a.passing;
 
   const bestPosition = (() => {
     const scores = {
