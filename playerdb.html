@@ -1,37 +1,52 @@
-async function loadPlayers() {
-  const res = await fetch("/.netlify/functions/getPlayers");
-  const players = await res.json();
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Player Database</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="playerdb.css" />
+</head>
 
-  const tbody = document.getElementById("playerTableBody");
-  tbody.innerHTML = "";
+<body>
+  <div class="card">
+    <h1>Player Database</h1>
+    <p class="muted">View and manage all registered players</p>
 
-  players.forEach(player => {
-    const tr = document.createElement("tr");
+    <!-- Add Player Button -->
+    <button onclick="window.location.href='addplayer.html'" 
+            class="edit-btn" 
+            style="margin-bottom: 20px;">
+      + Add New Player
+    </button>
 
-    const a = player.attributes;
-    const c = player.computed;
+    <!-- Player Table -->
+    <div id="playerTableContainer" class="playerdb-card">
+      <table id="playerTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Control</th>
+            <th>Pace</th>
+            <th>Shoot</th>
+            <th>Pass</th>
+            <th>Def</th>
+            <th>Work</th>
+            <th>GK</th>
+            <th>Best Pos</th>
+            <th>Overall</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody id="playerTableBody">
+          <!-- JS inserts rows here -->
+        </tbody>
+      </table>
+    </div>
 
-    tr.innerHTML = `
-      <td>${player.name}</td>
-      <td>${a.ballControl}</td>
-      <td>${a.pace}</td>
-      <td>${a.shooting}</td>
-      <td>${a.passing}</td>
-      <td>${a.defending}</td>
-      <td>${a.workRate}</td>
-      <td>${a.goalKeeping}</td>
-      <td>${c.bestPosition}</td>
-      <td>${c.overallRating}</td>
-      <td><button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button></td>
-    `;
+    <button onclick="window.location.href='admin.html'" class="backBtn">← Back to Admin</button>
+  </div>
 
-    tbody.appendChild(tr);
-  });
-}
-
-function editPlayer(id) {
-  alert("Edit player: " + id);
-  // We will build the full edit UI next
-}
-
-loadPlayers();
+  <script src="playerdb.js"></script>
+</body>
+</html>
