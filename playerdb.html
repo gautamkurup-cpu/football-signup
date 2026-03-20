@@ -1,56 +1,37 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Player Database</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+async function loadPlayers() {
+  const res = await fetch("/.netlify/functions/getPlayers");
+  const players = await res.json();
 
-  <body>
-  <div class="card">
-    <h1>Player Database</h1>
-    <p class="muted">Add, edit, and manage player attributes</p>
+  const tbody = document.getElementById("playerTableBody");
+  tbody.innerHTML = "";
 
-    <!-- Add Player Form -->
-    <h2>Add Player</h2>
-    <div class="joinBox">
-      <input id="name" placeholder="Player name" />
-      <input id="ballControl" type="number" placeholder="Ball Control (1-10)" />
-      <input id="shooting" type="number" placeholder="Shooting (1-10)" />
-      <input id="passing" type="number" placeholder="Passing (1-10)" />
-      <input id="defending" type="number" placeholder="Defending (1-10)" />
-      <input id="physicality" type="number" placeholder="Physicality (1-10)" />
-      <input id="workRate" type="number" placeholder="Work Rate (1-10)" />
-      <input id="goalkeeping" type="number" placeholder="Goalkeeping (1-10)" />
-      <button id="addBtn">Add Player</button>
-      <p id="addMsg" class="msg"></p>
-    </div>
+  players.forEach(player => {
+    const tr = document.createElement("tr");
 
-    <!-- Player List -->
-    <h2>All Players</h2>
-    <table id="playerTable">
-      <thead>
-  <tr>
-    <th>Name</th>
-    <th>Ball Control</th>
-    <th>Shooting</th>
-    <th>Passing</th>
-    <th>Defending</th>
-    <th>Physicality</th>
-    <th>Work Rate</th>
-    <th>Goalkeeping</th>
-    <th>Edit</th>
-    <th>Delete</th>
-  </tr>
-</thead>
+    const a = player.attributes;
+    const c = player.computed;
 
-      <tbody id="playerBody"></tbody>
-    </table>
+    tr.innerHTML = `
+      <td>${player.name}</td>
+      <td>${a.ballControl}</td>
+      <td>${a.pace}</td>
+      <td>${a.shooting}</td>
+      <td>${a.passing}</td>
+      <td>${a.defending}</td>
+      <td>${a.workRate}</td>
+      <td>${a.goalKeeping}</td>
+      <td>${c.bestPosition}</td>
+      <td>${c.overallRating}</td>
+      <td><button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button></td>
+    `;
 
-    <p id="dbMsg" class="msg"></p>
-  </div>
+    tbody.appendChild(tr);
+  });
+}
 
-  <script src="playerdb.js"></script>
-</body>
-</html>
+function editPlayer(id) {
+  alert("Edit player: " + id);
+  // We will build the full edit UI next
+}
+
+loadPlayers();
