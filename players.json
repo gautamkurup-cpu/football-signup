@@ -129,21 +129,21 @@
     "id": "ef959f9f-7af8-47d0-9222-48e7133995f7",
     "name": "Siddhu",
     "attributes": {
-      "ballControl": 7,
+      "ballControl": 8,
       "pace": 7,
-      "shooting": 7,
+      "shooting": 8,
       "passing": 6,
       "defending": 2,
       "workRate": 4,
       "goalKeeping": 1
     },
     "computed": {
-      "forwardScore": 21,
-      "midScore": 17,
-      "defenderScore": 13,
+      "forwardScore": 23,
+      "midScore": 18,
+      "defenderScore": 14,
       "goalkeeperScore": 8,
       "bestPosition": "FWD",
-      "overallRating": 14.75
+      "overallRating": 15.75
     }
   },
   {
