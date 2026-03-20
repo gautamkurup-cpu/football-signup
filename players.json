@@ -3,7 +3,7 @@
     "id": "36440ef1-2530-4370-8e9f-7b14d6582ac4",
     "name": "Test",
     "attributes": {
-      "ballControl": 1,
+      "ballControl": 9,
       "pace": 2,
       "shooting": 3,
       "passing": 4,
@@ -12,12 +12,12 @@
       "goalKeeping": 7
     },
     "computed": {
-      "forwardScore": 6,
-      "midScore": 11,
+      "forwardScore": 14,
+      "midScore": 19,
       "defenderScore": 15,
-      "goalkeeperScore": 8,
-      "bestPosition": "DEF",
-      "overallRating": 10
+      "goalkeeperScore": 16,
+      "bestPosition": "MID",
+      "overallRating": 16
     }
   }
 ]
