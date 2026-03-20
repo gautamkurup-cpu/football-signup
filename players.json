@@ -40,5 +40,26 @@
       "bestPosition": "FWD",
       "overallRating": 16.75
     }
+  },
+  {
+    "id": "f58088b8-d10e-42eb-a576-367b073f3220",
+    "name": "Sid",
+    "attributes": {
+      "ballControl": 8,
+      "pace": 6,
+      "shooting": 8,
+      "passing": 7,
+      "defending": 5,
+      "workRate": 5,
+      "goalKeeping": 3
+    },
+    "computed": {
+      "forwardScore": 22,
+      "midScore": 20,
+      "defenderScore": 17,
+      "goalkeeperScore": 11,
+      "bestPosition": "FWD",
+      "overallRating": 17.5
+    }
   }
 ]
