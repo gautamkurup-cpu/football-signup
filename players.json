@@ -3,5 +3,26 @@
     "id": "test-1",
     "name": "Updated Player",
     "rating": 8
+  },
+  {
+    "id": "b7c8d41e-b830-407f-84ed-55ef46faf3d0",
+    "name": "Test",
+    "attributes": {
+      "ballControl": 9,
+      "pace": 7,
+      "shooting": 6,
+      "passing": 3,
+      "defending": 2,
+      "workRate": 2,
+      "goalKeeping": 1
+    },
+    "computed": {
+      "forwardScore": 22,
+      "midScore": 14,
+      "defenderScore": 13,
+      "goalkeeperScore": 5,
+      "bestPosition": "FWD",
+      "overallRating": 7.33
+    }
   }
 ]
