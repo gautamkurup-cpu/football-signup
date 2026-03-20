@@ -1,7 +1,7 @@
 export async function handler() {
   const repo = "gautamkurup-cpu/football-signup";
   const filePath = "players.json";
-  const branch = process.env.BRANCH || "main";
+  const branch = process.env.PLAYER_DB_BRANCH || "main";
   const token = process.env.GITHUB_TOKEN;
 
   const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
