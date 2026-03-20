@@ -122,7 +122,7 @@
     "attributes": {
       "forward": 7.5,
       "mid": 5,
-      "defence": 5,
+      "defence": 3,
       "gk": 1
     },
     "computed": {
