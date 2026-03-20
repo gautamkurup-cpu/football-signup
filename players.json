@@ -63,5 +63,18 @@
     "computed": {
       "bestPosition": "MID"
     }
+  },
+  {
+    "id": "c5cbb645-aa0b-4d3c-bfbd-2e9e1fd276ce",
+    "name": "Sohail",
+    "attributes": {
+      "forward": 7.5,
+      "mid": 10,
+      "defence": 8,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "MID"
+    }
   }
 ]
