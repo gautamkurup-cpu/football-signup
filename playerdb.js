@@ -27,15 +27,11 @@ async function loadPlayers() {
     tr.innerHTML = `
       <td>${index + 1}</td>
       <td>${player.name}</td>
-      <td>${a.ballControl}</td>
-      <td>${a.pace}</td>
-      <td>${a.shooting}</td>
-      <td>${a.passing}</td>
-      <td>${a.defending}</td>
-      <td>${a.workRate}</td>
-      <td>${a.goalKeeping}</td>
+      <td>${a.forward}</td>
+      <td>${a.mid}</td>
+      <td>${a.defence}</td>
+      <td>${a.gk}</td>
       <td>${positionIcons[c.bestPosition] || ""} ${c.bestPosition}</td>
-      <td>${c.overallRating}</td>
       <td>
         <button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button>
       </td>
@@ -77,7 +73,7 @@ document.getElementById("searchInput").addEventListener("input", function () {
   const rows = document.querySelectorAll("#playerTableBody tr");
 
   rows.forEach(row => {
-    const name = row.children[0].textContent.toLowerCase();
+    const name = row.children[1].textContent.toLowerCase(); // name column
     row.style.display = name.includes(term) ? "" : "none";
   });
 });
