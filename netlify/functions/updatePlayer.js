@@ -1,115 +1,81 @@
+import fetch from "node-fetch";
 import { writeToGitHub } from "./githubWrite.js";
 
-export default async (request) => {
+export async function handler(event) {
   const repo = "gautamkurup-cpu/football-signup";
   const filePath = "players.json";
+  const branch = process.env.BRANCH || "main";
   const token = process.env.GITHUB_TOKEN;
 
-  // -----------------------------
-  // 1. Parse incoming request body
-  // -----------------------------
-  const body = await request.json();
+  const body = JSON.parse(event.body);
 
-  const {
-    id,
-    name,
-    ballControl,
-    pace,
-    shooting,
-    passing,
-    defending,
-    workRate,
-    goalKeeping
-  } = body;
-
-  if (!id) {
-    return new Response(JSON.stringify({ error: "Missing player ID" }), { status: 400 });
-  }
-
-  // -----------------------------
-  // 2. Build updated attributes
-  // -----------------------------
-  const updatedAttributes = {
-    ballControl,
-    pace,
-    shooting,
-    passing,
-    defending,
-    workRate,
-    goalKeeping
-  };
-
-  // -----------------------------
-  // 3. Recompute position scores
-  // -----------------------------
-  const forwardScore = shooting + pace + ballControl;
-  const midScore = passing + workRate + ballControl;
-  const defenderScore = defending + workRate + ballControl;
-  const goalkeeperScore = (goalKeeping * 2) + passing;
-
-  // -----------------------------
-  // 4. Determine best position
-  // -----------------------------
-  const scoreMap = {
-    FWD: forwardScore,
-    MID: midScore,
-    DEF: defenderScore,
-    GK: goalkeeperScore
-  };
-
-  const bestPosition = Object.keys(scoreMap).reduce((a, b) =>
-    scoreMap[a] > scoreMap[b] ? a : b
-  );
-
-  // -----------------------------
-  // 5. Compute overall rating (1–10)
-  // -----------------------------
-  const bestScore = scoreMap[bestPosition];
-  const overallRating = Number(((bestScore / 30) * 10).toFixed(2));
-
-  // -----------------------------
-  // 6. Fetch existing players
-  // -----------------------------
-  const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
-    headers: { Authorization: `Bearer ${token}` }
+  const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `token ${token}` }
   });
 
-  if (getRes.status !== 200) {
-    const errText = await getRes.text();
-    return new Response(JSON.stringify({ error: errText }), { status: 500 });
+  if (!res.ok) {
+    return { statusCode: 500, body: "File not found" };
   }
 
-  const data = await getRes.json();
-  const content = atob(data.content);
-  let players = JSON.parse(content);
+  const data = await res.json();
+  const sha = data.sha;
+  let players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
 
-  // -----------------------------
-  // 7. Find and update the player
-  // -----------------------------
-  const index = players.findIndex((p) => p.id === id);
-
-  if (index === -1) {
-    return new Response(JSON.stringify({ error: "Player not found" }), { status: 404 });
+  const idx = players.findIndex(p => p.id === body.id);
+  if (idx === -1) {
+    return { statusCode: 404, body: "Player not found" };
   }
 
-  players[index] = {
-    ...players[index],
-    name,
-    attributes: updatedAttributes,
-    computed: {
-      forwardScore,
-      midScore,
-      defenderScore,
-      goalkeeperScore,
-      bestPosition,
-      overallRating
-    }
+  // Update attributes
+  const updated = players[idx];
+  updated.name = body.name;
+  updated.attributes = {
+    ballControl: body.ballControl,
+    pace: body.pace,
+    shooting: body.shooting,
+    passing: body.passing,
+    defending: body.defending,
+    workRate: body.workRate,
+    goalKeeping: body.goalKeeping
   };
 
-  // -----------------------------
-  // 8. Save updated list to GitHub
-  // -----------------------------
-  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2));
+  // Recompute scores
+  const a = updated.attributes;
+  const forwardScore = a.ballControl + a.pace + a.shooting;
+  const midScore = a.ballControl + a.passing + a.workRate;
+  const defenderScore = a.defending + a.workRate + a.passing;
+  const goalkeeperScore = a.goalKeeping + a.ballControl;
 
-  return new Response(JSON.stringify({ success: true, player: players[index] }), { status: 200 });
-};
+  const bestPosition = (() => {
+    const scores = {
+      FWD: forwardScore,
+      MID: midScore,
+      DEF: defenderScore,
+      GK: goalkeeperScore
+    };
+    return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  })();
+
+  const overallRating = Number(
+    ((forwardScore + midScore + defenderScore + goalkeeperScore) / 4).toFixed(2)
+  );
+
+  updated.computed = {
+    forwardScore,
+    midScore,
+    defenderScore,
+    goalkeeperScore,
+    bestPosition,
+    overallRating
+  };
+
+  players[idx] = updated;
+
+  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2), sha, branch);
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ success: true })
+  };
+}
