@@ -154,5 +154,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "09c421d7-c728-428e-bf02-ff90f8f2a695",
+    "name": "Gareth",
+    "attributes": {
+      "forward": 5,
+      "mid": 7,
+      "defence": 10,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
