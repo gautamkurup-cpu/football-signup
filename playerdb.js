@@ -1,3 +1,16 @@
+/* -----------------------------------------
+   Position Icons
+----------------------------------------- */
+const positionIcons = {
+  "FWD": "⚽",
+  "MID": "🎯",
+  "DEF": "🛡️",
+  "GK": "🧤"
+};
+
+/* -----------------------------------------
+   Load Players into Table
+----------------------------------------- */
 async function loadPlayers() {
   const res = await fetch("/.netlify/functions/getPlayers");
   const players = await res.json();
@@ -20,7 +33,7 @@ async function loadPlayers() {
       <td>${a.defending}</td>
       <td>${a.workRate}</td>
       <td>${a.goalKeeping}</td>
-      <td>${c.bestPosition}</td>
+      <td>${positionIcons[c.bestPosition] || ""} ${c.bestPosition}</td>
       <td>${c.overallRating}</td>
       <td>
         <button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button>
@@ -34,10 +47,16 @@ async function loadPlayers() {
   });
 }
 
+/* -----------------------------------------
+   Edit Player
+----------------------------------------- */
 function editPlayer(id) {
   window.location.href = `editplayer.html?id=${id}`;
 }
 
+/* -----------------------------------------
+   Delete Player
+----------------------------------------- */
 async function deletePlayer(id) {
   if (!confirm("Delete this player?")) return;
 
@@ -49,4 +68,49 @@ async function deletePlayer(id) {
   loadPlayers(); // refresh table
 }
 
+/* -----------------------------------------
+   Search Filter
+----------------------------------------- */
+document.getElementById("searchInput").addEventListener("input", function () {
+  const term = this.value.toLowerCase();
+  const rows = document.querySelectorAll("#playerTableBody tr");
+
+  rows.forEach(row => {
+    const name = row.children[0].textContent.toLowerCase();
+    row.style.display = name.includes(term) ? "" : "none";
+  });
+});
+
+/* -----------------------------------------
+   Sortable Columns
+----------------------------------------- */
+document.querySelectorAll("#playerTable thead th").forEach((header, index) => {
+  header.addEventListener("click", () => sortTable(index));
+});
+
+function sortTable(colIndex) {
+  const tbody = document.getElementById("playerTableBody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  const sorted = rows.sort((a, b) => {
+    const A = a.children[colIndex].textContent.trim();
+    const B = b.children[colIndex].textContent.trim();
+
+    const numA = parseFloat(A);
+    const numB = parseFloat(B);
+
+    // numeric sort if both values are numbers
+    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+
+    // otherwise alphabetical
+    return A.localeCompare(B);
+  });
+
+  tbody.innerHTML = "";
+  sorted.forEach(r => tbody.appendChild(r));
+}
+
+/* -----------------------------------------
+   Initial Load
+----------------------------------------- */
 loadPlayers();
