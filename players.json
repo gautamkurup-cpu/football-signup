@@ -128,5 +128,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "4b6e5918-5c0a-4c2a-aa6a-f98440674916",
+    "name": "Saki",
+    "attributes": {
+      "forward": 3,
+      "mid": 6,
+      "defence": 7.5,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
