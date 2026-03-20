@@ -232,5 +232,18 @@
     "computed": {
       "bestPosition": "GK"
     }
+  },
+  {
+    "id": "c03be77d-a077-4f53-aa22-6088d2e3b100",
+    "name": "Kiran Vibhu",
+    "attributes": {
+      "forward": 1,
+      "mid": 1,
+      "defence": 2,
+      "gk": 2
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
