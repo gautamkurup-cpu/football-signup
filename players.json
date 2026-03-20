@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": "17b63781-6795-4f88-aaab-1e08f40f1515",
+    "name": "Gautam",
+    "attributes": {
+      "forward": 6,
+      "mid": 7,
+      "defence": 5,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "MID"
+    }
+  }
+]
