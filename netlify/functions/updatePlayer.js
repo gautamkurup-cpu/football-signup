@@ -9,6 +9,7 @@ export async function handler(event) {
 
   const body = JSON.parse(event.body);
 
+  // Load existing players
   const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
   const res = await fetch(url, {
     headers: { Authorization: `token ${token}` }
@@ -22,6 +23,7 @@ export async function handler(event) {
   const sha = data.sha;
   let players = JSON.parse(Buffer.from(data.content, "base64").toString("utf8"));
 
+  // Find player
   const idx = players.findIndex(p => p.id === body.id);
   if (idx === -1) {
     return { statusCode: 404, body: "Player not found" };
@@ -72,7 +74,15 @@ export async function handler(event) {
 
   players[idx] = updated;
 
-  await writeToGitHub(repo, filePath, token, JSON.stringify(players, null, 2), sha, branch);
+  // Write back to GitHub
+  await writeToGitHub(
+    repo,
+    filePath,
+    token,
+    JSON.stringify(players, null, 2),
+    sha,
+    branch
+  );
 
   return {
     statusCode: 200,
