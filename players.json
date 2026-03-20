@@ -108,7 +108,7 @@
     "id": "80efada3-68a7-4141-8f05-adf810821c42",
     "name": "Kutty",
     "attributes": {
-      "ballControl": 8,
+      "ballControl": 9.5,
       "pace": 5,
       "shooting": 7,
       "passing": 6,
@@ -117,12 +117,12 @@
       "goalKeeping": 3
     },
     "computed": {
-      "forwardScore": 20,
-      "midScore": 18,
-      "defenderScore": 15,
+      "forwardScore": 21.5,
+      "midScore": 19.5,
+      "defenderScore": 16.5,
       "goalkeeperScore": 12,
       "bestPosition": "FWD",
-      "overallRating": 16.25
+      "overallRating": 17.38
     }
   },
   {
