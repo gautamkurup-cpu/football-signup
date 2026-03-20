@@ -206,5 +206,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "43990522-0081-44b0-b657-c665fd1ebcec",
+    "name": "Abhay",
+    "attributes": {
+      "forward": 2,
+      "mid": 2,
+      "defence": 5,
+      "gk": 1
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
