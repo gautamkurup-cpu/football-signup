@@ -103,5 +103,26 @@
       "bestPosition": "DEF",
       "overallRating": 16
     }
+  },
+  {
+    "id": "80efada3-68a7-4141-8f05-adf810821c42",
+    "name": "Kutty",
+    "attributes": {
+      "ballControl": 8,
+      "pace": 5,
+      "shooting": 7,
+      "passing": 6,
+      "defending": 3,
+      "workRate": 4,
+      "goalKeeping": 3
+    },
+    "computed": {
+      "forwardScore": 20,
+      "midScore": 18,
+      "defenderScore": 13,
+      "goalkeeperScore": 11,
+      "bestPosition": "FWD",
+      "overallRating": 15.5
+    }
   }
 ]
