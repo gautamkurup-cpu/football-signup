@@ -258,5 +258,18 @@
     "computed": {
       "bestPosition": "FWD"
     }
+  },
+  {
+    "id": "4d2f340a-2d41-4470-b946-b3cb921f2c12",
+    "name": "Anthony",
+    "attributes": {
+      "forward": 3,
+      "mid": 3,
+      "defence": 3,
+      "gk": 10
+    },
+    "computed": {
+      "bestPosition": "GK"
+    }
   }
 ]
