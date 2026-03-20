@@ -77,10 +77,10 @@
     "computed": {
       "forwardScore": 7,
       "midScore": 12,
-      "defenderScore": 8,
-      "goalkeeperScore": 12,
-      "bestPosition": "MID",
-      "overallRating": 9.75
+      "defenderScore": 7,
+      "goalkeeperScore": 20,
+      "bestPosition": "GK",
+      "overallRating": 11.5
     }
   },
   {
