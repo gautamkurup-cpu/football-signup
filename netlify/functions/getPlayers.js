@@ -3,27 +3,37 @@ export default async () => {
   const filePath = "players.json";
   const token = process.env.GITHUB_TOKEN;
 
-  const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
+  // -----------------------------
+  // 1. Fetch players.json from GitHub
+  // -----------------------------
+  const res = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
 
-  try {
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    if (res.status === 404) {
-      // File doesn't exist yet → treat as empty list
-      return new Response(JSON.stringify([]), { status: 200 });
-    }
-
-    if (!res.ok) {
-      const errText = await res.text();
-      return new Response(JSON.stringify({ error: errText }), { status: 500 });
-    }
-
-    const data = await res.json();
-    const content = atob(data.content);
-    return new Response(content, { status: 200 });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+  // -----------------------------
+  // 2. If file doesn't exist, return empty list
+  // -----------------------------
+  if (res.status === 404) {
+    return new Response(JSON.stringify([]), { status: 200 });
   }
+
+  // -----------------------------
+  // 3. Handle unexpected errors
+  // -----------------------------
+  if (res.status !== 200) {
+    const errText = await res.text();
+    return new Response(JSON.stringify({ error: errText }), { status: 500 });
+  }
+
+  // -----------------------------
+  // 4. Decode and parse JSON
+  // -----------------------------
+  const data = await res.json();
+  const content = atob(data.content);
+  const players = JSON.parse(content);
+
+  // -----------------------------
+  // 5. Return full player list
+  // -----------------------------
+  return new Response(JSON.stringify(players), { status: 200 });
 };
