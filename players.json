@@ -187,5 +187,26 @@
       "bestPosition": "FWD",
       "overallRating": 20.25
     }
+  },
+  {
+    "id": "292dbf21-0aad-4f96-ba2f-bf1f96bfec47",
+    "name": "Abhay",
+    "attributes": {
+      "ballControl": 4,
+      "pace": 6,
+      "shooting": 4,
+      "passing": 4,
+      "defending": 8,
+      "workRate": 8,
+      "goalKeeping": 1
+    },
+    "computed": {
+      "forwardScore": 14,
+      "midScore": 16,
+      "defenderScore": 20,
+      "goalkeeperScore": 6,
+      "bestPosition": "DEF",
+      "overallRating": 14
+    }
   }
 ]
