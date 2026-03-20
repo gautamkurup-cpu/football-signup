@@ -20,14 +20,12 @@ async function loadPlayer() {
 
   const a = player.attributes;
 
+  // Fill new fields
   document.getElementById("name").value = player.name;
-  document.getElementById("ballControl").value = a.ballControl;
-  document.getElementById("pace").value = a.pace;
-  document.getElementById("shooting").value = a.shooting;
-  document.getElementById("passing").value = a.passing;
-  document.getElementById("defending").value = a.defending;
-  document.getElementById("workRate").value = a.workRate;
-  document.getElementById("goalKeeping").value = a.goalKeeping;
+  document.getElementById("forward").value = a.forward;
+  document.getElementById("mid").value = a.mid;
+  document.getElementById("defence").value = a.defence;
+  document.getElementById("gk").value = a.gk;
 }
 
 // 3. Save updated player
@@ -35,13 +33,10 @@ document.getElementById("saveBtn").onclick = async function () {
   const payload = {
     id: playerId,
     name: document.getElementById("name").value.trim(),
-    ballControl: Number(document.getElementById("ballControl").value),
-    pace: Number(document.getElementById("pace").value),
-    shooting: Number(document.getElementById("shooting").value),
-    passing: Number(document.getElementById("passing").value),
-    defending: Number(document.getElementById("defending").value),
-    workRate: Number(document.getElementById("workRate").value),
-    goalKeeping: Number(document.getElementById("goalKeeping").value)
+    forward: Number(document.getElementById("forward").value),
+    mid: Number(document.getElementById("mid").value),
+    defence: Number(document.getElementById("defence").value),
+    gk: Number(document.getElementById("gk").value)
   };
 
   const msg = document.getElementById("editMsg");
