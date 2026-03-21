@@ -203,8 +203,8 @@ th.sorted-desc .sort-icon {
 #playerTable thead th {
   position: sticky;
   top: 0;
-  background: #ffffff;
-  color: #111;          /* ← dark header text */
+  background: #f8f8f8;
+  color: #222;          /* ← dark header text */
   font-weight: 600;     /* optional: makes headers crisp */
   z-index: 5;
   border-bottom: 2px solid #ddd;
