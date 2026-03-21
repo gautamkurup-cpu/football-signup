@@ -111,22 +111,22 @@
       border-radius: 4px;
       cursor: pointer;
     }
-   
-    /* TEAM GENERATOR SECTIONS */
-  .tg-section {
-    margin-top: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-  }
 
-  .tg-box {
-    margin-top: 10px;
-    padding: 15px;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    min-height: 40px;
-  }
+    /* TEAM GENERATOR SECTIONS */
+    .tg-section {
+      margin-top: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tg-box {
+      margin-top: 10px;
+      padding: 15px;
+      background: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      min-height: 40px;
+    }
   </style>
 </head>
 
@@ -144,90 +144,104 @@
 
     <h1>Admin</h1>
     <p>Manage the shared signup list</p>
-    <p><strong>Status:</strong> ADMIN</p>
-    <p><strong>Players:</strong> <span id="playerCount">0</span>/14</p>
 
-    <!-- ⭐ ADMIN ACTION BUTTONS -->
-    <div class="admin-actions">
-      <div>
-        <button class="admin-btn" id="manageDBBtn">Manage Player Database</button>
-        <div class="admin-desc">Add, edit, and rate players.</div>
+    <!-- ⭐ LOGIN BOX (ADDED BACK) -->
+    <div id="loginBox" style="margin-bottom:20px;">
+      <input id="adminPass" type="password" placeholder="Enter admin password" />
+      <button id="loginBtn">Login</button>
+      <p id="loginMsg"></p>
+    </div>
+
+    <!-- ⭐ ADMIN PANEL (HIDDEN UNTIL LOGIN) -->
+    <div id="adminPanel" style="display:none;">
+
+      <p><strong>Status:</strong> ADMIN</p>
+      <p><strong>Players:</strong> <span id="playerCount">0</span>/14</p>
+
+      <!-- ⭐ ADMIN ACTION BUTTONS -->
+      <div class="admin-actions">
+        <div>
+          <button class="admin-btn" id="manageDBBtn">Manage Player Database</button>
+          <div class="admin-desc">Add, edit, and rate players.</div>
+        </div>
+
+        <div>
+          <button class="admin-btn" id="teamGenBtn">Team Generator</button>
+          <div class="admin-desc">Build and publish teams for this week.</div>
+        </div>
       </div>
 
-      <div>
-        <button class="admin-btn" id="teamGenBtn">Team Generator</button>
-        <div class="admin-desc">Build and publish teams for this week.</div>
-      </div>
-    </div>
-
-    <!-- ⭐ INTERNAL TABS -->
-    <div class="tabs">
-      <div class="tab active" data-tab="signupTab">Signup Management</div>
-      <div class="tab" data-tab="dbTab">Player Database</div>
-      <div class="tab" data-tab="teamGenTab">Team Generator</div>
-    </div>
-
-    <!-- ⭐ TAB CONTENT: SIGNUP MANAGEMENT -->
-    <div id="signupTab" class="tab-content active">
-
-      <div class="players-header">
-        <h2 id="playersHeading">Players</h2>
-        <button id="resetBtn">Reset list</button>
+      <!-- ⭐ INTERNAL TABS -->
+      <div class="tabs">
+        <div class="tab active" data-tab="signupTab">Signup Management</div>
+        <div class="tab" data-tab="dbTab">Player Database</div>
+        <div class="tab" data-tab="teamGenTab">Team Generator</div>
       </div>
 
-      <div id="playersList"></div>
-    </div>
+      <!-- ⭐ TAB CONTENT: SIGNUP MANAGEMENT -->
+      <div id="signupTab" class="tab-content active">
 
-    <!-- ⭐ TAB CONTENT: PLAYER DATABASE -->
-    <div id="dbTab" class="tab-content">
-      <h2>Player Database</h2>
-      <p>DB UI goes here…</p>
-    </div>
+        <div class="players-header">
+          <h2 id="playersHeading">Players</h2>
+          <button id="resetBtn">Reset list</button>
+        </div>
 
-    <!-- ⭐ TAB CONTENT: TEAM GENERATOR -->
-    <div id="teamGenTab" class="tab-content">
-      <h2>Team Generator</h2>
-      <!-- STEP 1: Load Weekly Players -->
-  <section class="tg-section">
-    <h3>1. Load Weekly Signup List</h3>
-    <button class="admin-btn" id="tgLoadSignup">Load Weekly Players</button>
-    <div id="tgSignupList" class="tg-box"></div>
-  </section>
+        <div id="playersList"></div>
+      </div>
 
-  <!-- STEP 2: Match to Player DB -->
-  <section class="tg-section">
-    <h3>2. Match Players to Database</h3>
-    <button class="admin-btn" id="tgMatchBtn">Match Players</button>
-    <div id="tgMatchResults" class="tg-box"></div>
-  </section>
+      <!-- ⭐ TAB CONTENT: PLAYER DATABASE -->
+      <div id="dbTab" class="tab-content">
+        <h2>Player Database</h2>
+        <p>DB UI goes here…</p>
+      </div>
 
-  <!-- STEP 3: Add Extra Players -->
-  <section class="tg-section">
-    <h3>3. Add Extra Players (Optional)</h3>
-    <button class="admin-btn" id="tgAddExtraBtn">Add Extra Players</button>
-    <div id="tgExtraPlayers" class="tg-box"></div>
-  </section>
+      <!-- ⭐ TAB CONTENT: TEAM GENERATOR -->
+      <div id="teamGenTab" class="tab-content">
+        <h2>Team Generator</h2>
 
-  <!-- STEP 4: Generate Teams -->
-  <section class="tg-section">
-    <h3>4. Generate Teams</h3>
-    <button class="admin-btn" id="tgGenerateBtn">Generate Teams</button>
-    <div id="tgTeamsOutput" class="tg-box"></div>
-  </section>
+        <!-- STEP 1: Load Weekly Players -->
+        <section class="tg-section">
+          <h3>1. Load Weekly Signup List</h3>
+          <button class="admin-btn" id="tgLoadSignup">Load Weekly Players</button>
+          <div id="tgSignupList" class="tg-box"></div>
+        </section>
 
-  <!-- STEP 5: Manual Adjustments -->
-  <section class="tg-section">
-    <h3>5. Manual Adjustments</h3>
-    <div id="tgManualAdjust" class="tg-box"></div>
-  </section>
+        <!-- STEP 2: Match to Player DB -->
+        <section class="tg-section">
+          <h3>2. Match Players to Database</h3>
+          <button class="admin-btn" id="tgMatchBtn">Match Players</button>
+          <div id="tgMatchResults" class="tg-box"></div>
+        </section>
 
-  <!-- STEP 6: Publish Teams -->
-  <section class="tg-section">
-    <h3>6. Publish Teams</h3>
-    <button class="admin-btn" id="tgPublishBtn">Publish Teams</button>
-    <div id="tgPublishStatus" class="tg-box"></div>
-  </section>
-    </div>
+        <!-- STEP 3: Add Extra Players -->
+        <section class="tg-section">
+          <h3>3. Add Extra Players (Optional)</h3>
+          <button class="admin-btn" id="tgAddExtraBtn">Add Extra Players</button>
+          <div id="tgExtraPlayers" class="tg-box"></div>
+        </section>
+
+        <!-- STEP 4: Generate Teams -->
+        <section class="tg-section">
+          <h3>4. Generate Teams</h3>
+          <button class="admin-btn" id="tgGenerateBtn">Generate Teams</button>
+          <div id="tgTeamsOutput" class="tg-box"></div>
+        </section>
+
+        <!-- STEP 5: Manual Adjustments -->
+        <section class="tg-section">
+          <h3>5. Manual Adjustments</h3>
+          <div id="tgManualAdjust" class="tg-box"></div>
+        </section>
+
+        <!-- STEP 6: Publish Teams -->
+        <section class="tg-section">
+          <h3>6. Publish Teams</h3>
+          <button class="admin-btn" id="tgPublishBtn">Publish Teams</button>
+          <div id="tgPublishStatus" class="tg-box"></div>
+        </section>
+      </div>
+
+    </div> <!-- END adminPanel -->
 
   </div>
 
@@ -258,6 +272,7 @@
       });
     });
   </script>
-<script src="admin.js"></script>
+
+  <script src="admin.js"></script>
 </body>
 </html>
