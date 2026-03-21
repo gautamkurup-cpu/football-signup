@@ -199,3 +199,39 @@ th.sorted-desc .sort-icon {
     width: 100%;
   }
 }
+/* Sticky table header */
+#playerTable thead th {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 5;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Sort icons */
+.sort-icon {
+  font-size: 0.7rem;
+  opacity: 0.4;
+  margin-left: 4px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+th {
+  cursor: pointer;
+}
+
+/* Active sort direction */
+th.sorted-asc .sort-icon {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+th.sorted-desc .sort-icon {
+  opacity: 1;
+  transform: translateY(2px);
+}
+
+/* Highlight sorted column */
+.sorted-col {
+  background: #f7faff;
+}
