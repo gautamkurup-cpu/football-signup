@@ -199,16 +199,24 @@ th.sorted-desc .sort-icon {
     width: 100%;
   }
 }
-/* Sticky table header */
+/* Sticky dark table header */
 #playerTable thead th {
   position: sticky;
   top: 0;
-  background: #f8f8f8;
-  color: #222;          /* ← dark header text */
-  font-weight: 600;     /* optional: makes headers crisp */
+  background: #222;     /* dark background */
+  color: #fff;          /* white text for contrast */
+  font-weight: 600;
   z-index: 5;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid #444;
+  padding: 10px;
+  transition: background 0.2s ease;
 }
+
+/* Hover effect */
+#playerTable thead th:hover {
+  background: #333;     /* slightly lighter on hover */
+}
+
 
 /* Sort icons */
 .sort-icon {
