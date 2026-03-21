@@ -105,6 +105,26 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
   background: #f0f0f0;
 }
+.sort-icon {
+  font-size: 0.7rem;
+  opacity: 0.5;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+th {
+  cursor: pointer;
+}
+
+th.sorted-asc .sort-icon {
+  opacity: 1;
+  content: "↑";
+}
+
+th.sorted-desc .sort-icon {
+  opacity: 1;
+  content: "↓";
+}
 
 /* ------------------------------
    Buttons in Table
