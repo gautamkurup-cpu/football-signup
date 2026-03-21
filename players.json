@@ -362,5 +362,18 @@
     "computed": {
       "bestPosition": "DEF"
     }
+  },
+  {
+    "id": "1d4dceaa-9482-4c61-9f9b-bbe9612d2ee7",
+    "name": "Robert",
+    "attributes": {
+      "forward": 7,
+      "mid": 8,
+      "defence": 10,
+      "gk": 9
+    },
+    "computed": {
+      "bestPosition": "DEF"
+    }
   }
 ]
