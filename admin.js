@@ -20,18 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     m.style.color = isError ? "#b00020" : "#1b6cff";
   }
 
-  // Always fetch fresh state
   async function loadSharedState() {
     const res = await fetch(`/api/state?ts=${Date.now()}`, { cache: "no-store" });
     return await res.json();
   }
 
-  /*  
-    ⭐ UPDATED renderList()
-    - Writes into #playersList
-    - Updates #playerCount
-    - Uses .player-row layout
-  */
   function renderList(players) {
     const list = el("playersList");
     const count = el("playerCount");
@@ -54,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
       list.appendChild(row);
     });
 
-    // Attach remove handlers
     document.querySelectorAll(".remove-btn").forEach((btn) => {
       btn.onclick = async () => {
         const name = btn.dataset.name;
@@ -86,7 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*  
-    ⭐ LOGIN BUTTON
+    ⭐ LOGIN BUTTON — UPDATED
+    Now validates password before unlocking admin panel
   */
   if (el("loginBtn")) {
     el("loginBtn").onclick = async () => {
@@ -96,6 +89,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // Validate password using a harmless dry-run call
+      const testResp = await fetch("/api/adminReset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secret: adminSecret, dryRun: true })
+      });
+
+      if (testResp.status === 401) {
+        setLoginMsg("Wrong password", true);
+        adminSecret = "";
+        return;
+      }
+
+      // Password OK → unlock admin panel
       el("loginBox").style.display = "none";
       el("adminPanel").style.display = "block";
 
