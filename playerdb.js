@@ -79,15 +79,34 @@ document.getElementById("searchInput").addEventListener("input", function () {
 });
 
 /* -----------------------------------------
-   Sortable Columns
+   Sortable Columns with Toggle
 ----------------------------------------- */
+let currentSortCol = null;
+let currentSortDir = "asc";
+
 document.querySelectorAll("#playerTable thead th").forEach((header, index) => {
-  header.addEventListener("click", () => sortTable(index));
+  header.addEventListener("click", () => sortTable(index, header));
 });
 
-function sortTable(colIndex) {
+function sortTable(colIndex, header) {
   const tbody = document.getElementById("playerTableBody");
   const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  // Determine sort direction
+  if (currentSortCol === colIndex) {
+    currentSortDir = currentSortDir === "asc" ? "desc" : "asc";
+  } else {
+    currentSortCol = colIndex;
+    currentSortDir = "asc";
+  }
+
+  // Remove previous sort classes
+  document.querySelectorAll("th").forEach(th => {
+    th.classList.remove("sorted-asc", "sorted-desc");
+  });
+
+  // Add new sort class
+  header.classList.add(currentSortDir === "asc" ? "sorted-asc" : "sorted-desc");
 
   const sorted = rows.sort((a, b) => {
     const A = a.children[colIndex].textContent.trim();
@@ -96,11 +115,15 @@ function sortTable(colIndex) {
     const numA = parseFloat(A);
     const numB = parseFloat(B);
 
-    // numeric sort if both values are numbers
-    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+    let comparison;
 
-    // otherwise alphabetical
-    return A.localeCompare(B);
+    if (!isNaN(numA) && !isNaN(numB)) {
+      comparison = numA - numB;
+    } else {
+      comparison = A.localeCompare(B);
+    }
+
+    return currentSortDir === "asc" ? comparison : -comparison;
   });
 
   tbody.innerHTML = "";
