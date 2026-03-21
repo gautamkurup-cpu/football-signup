@@ -18,15 +18,21 @@ function setAdminMsg(text, isError = false) {
   m.style.color = isError ? "#b00020" : "#1b6cff";
 }
 
-// ✅ Cache-busting version: always fetch fresh state
+// Always fetch fresh state
 async function loadSharedState() {
   const res = await fetch(`/api/state?ts=${Date.now()}`, { cache: "no-store" });
   return await res.json();
 }
 
+/*  
+  ⭐ UPDATED renderList()
+  - Now writes into #playersList (not #adminList)
+  - Updates #playerCount (not #countAdmin)
+  - Uses .player-row layout from new admin.html
+*/
 function renderList(players) {
-  const list = el("adminList");
-  const count = el("countAdmin");
+  const list = el("playersList");
+  const count = el("playerCount");
   const resetBtn = el("resetBtn");
 
   if (!list || !count) return;
@@ -35,26 +41,21 @@ function renderList(players) {
   count.textContent = players.length;
 
   players.forEach((name) => {
-    const li = document.createElement("li");
-    li.style.display = "flex";
-    li.style.justifyContent = "space-between";
-    li.style.alignItems = "center";
-    li.style.gap = "10px";
+    const row = document.createElement("div");
+    row.className = "player-row";
 
-    const span = document.createElement("span");
-    span.textContent = name;
+    row.innerHTML = `
+      <span>${name}</span>
+      <button class="remove-btn" data-name="${name}">Remove</button>
+    `;
 
-    const btn = document.createElement("button");
-    btn.textContent = "Remove";
-    btn.style.width = "auto";
-    btn.style.padding = "8px 10px";
-    btn.style.background = "#333";
-    btn.style.color = "white";
-    btn.style.border = "none";
-    btn.style.borderRadius = "8px";
-    btn.style.cursor = "pointer";
+    list.appendChild(row);
+  });
 
+  // Attach remove handlers
+  document.querySelectorAll(".remove-btn").forEach((btn) => {
     btn.onclick = async () => {
+      const name = btn.dataset.name;
       if (!confirm(`Remove ${name}?`)) return;
 
       const resp = await fetch("/api/adminRemove", {
@@ -72,10 +73,6 @@ function renderList(players) {
       renderList(data.players || []);
       setAdminMsg(`${name} removed`);
     };
-
-    li.appendChild(span);
-    li.appendChild(btn);
-    list.appendChild(li);
   });
 
   if (resetBtn) resetBtn.disabled = players.length === 0;
@@ -86,6 +83,11 @@ async function refresh() {
   renderList(state.players || []);
 }
 
+/*  
+  ⭐ LOGIN BUTTON
+  - Works exactly the same
+  - Shows adminPanel (unchanged)
+*/
 el("loginBtn").onclick = async () => {
   adminSecret = (el("adminPass").value || "").trim();
   if (!adminSecret) {
@@ -100,6 +102,10 @@ el("loginBtn").onclick = async () => {
   setAdminMsg("Loaded shared list");
 };
 
+/*  
+  ⭐ RESET BUTTON
+  - Now attached to #resetBtn in new layout
+*/
 el("resetBtn").onclick = async () => {
   if (!confirm("Reset list for everyone?")) return;
 
