@@ -32,28 +32,6 @@
       padding: 0 20px;
     }
 
-    /* ADMIN ACTION BUTTONS */
-    .admin-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    .admin-btn {
-      background: #007bff;
-      color: white;
-      padding: 12px 18px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .admin-desc {
-      font-size: 13px;
-      color: #666;
-      margin-top: 4px;
-    }
-
     /* TABS */
     .tabs {
       display: flex;
@@ -87,13 +65,28 @@
       margin-top: 25px;
       margin-bottom: 10px;
     }
-    #resetBtn {
-      background: #dc3545;
-      color: white;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
+
+    /* RESET + REMOVE BUTTONS (compact + equal width) */
+    #resetBtn,
+    .remove-btn {
+      width: 90px;
+      padding: 6px 0;
+      font-size: 14px;
+      text-align: center;
+      border-radius: 4px;
       cursor: pointer;
+    }
+
+    #resetBtn {
+      background: #fff;
+      color: #dc3545;
+      border: 1px solid #dc3545;
+    }
+
+    .remove-btn {
+      background: black;
+      color: white;
+      border: none;
     }
 
     /* PLAYER LIST */
@@ -102,14 +95,6 @@
       justify-content: space-between;
       padding: 8px 0;
       border-bottom: 1px solid #eee;
-    }
-    .remove-btn {
-      background: black;
-      color: white;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
     }
 
     /* TEAM GENERATOR SECTIONS */
@@ -126,6 +111,31 @@
       border: 1px solid #ddd;
       border-radius: 6px;
       min-height: 40px;
+    }
+
+    /* FOOTER ACTIONS */
+    .admin-footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+      font-size: 13px;
+      color: #666;
+    }
+    .admin-btn {
+      background: #007bff;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      width: 100%;
+      text-align: center;
+    }
+    .admin-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
   </style>
 </head>
@@ -145,7 +155,7 @@
     <h1>Admin</h1>
     <p>Manage the shared signup list</p>
 
-    <!-- ⭐ LOGIN BOX (ADDED BACK) -->
+    <!-- ⭐ LOGIN BOX -->
     <div id="loginBox" style="margin-bottom:20px;">
       <input id="adminPass" type="password" placeholder="Enter admin password" />
       <button id="loginBtn">Login</button>
@@ -157,19 +167,6 @@
 
       <p><strong>Status:</strong> ADMIN</p>
       <p><strong>Players:</strong> <span id="playerCount">0</span>/14</p>
-
-      <!-- ⭐ ADMIN ACTION BUTTONS -->
-      <div class="admin-actions">
-        <div>
-          <button class="admin-btn" id="manageDBBtn">Manage Player Database</button>
-          <div class="admin-desc">Add, edit, and rate players.</div>
-        </div>
-
-        <div>
-          <button class="admin-btn" id="teamGenBtn">Team Generator</button>
-          <div class="admin-desc">Build and publish teams for this week.</div>
-        </div>
-      </div>
 
       <!-- ⭐ INTERNAL TABS -->
       <div class="tabs">
@@ -199,46 +196,57 @@
       <div id="teamGenTab" class="tab-content">
         <h2>Team Generator</h2>
 
-        <!-- STEP 1: Load Weekly Players -->
         <section class="tg-section">
           <h3>1. Load Weekly Signup List</h3>
           <button class="admin-btn" id="tgLoadSignup">Load Weekly Players</button>
           <div id="tgSignupList" class="tg-box"></div>
         </section>
 
-        <!-- STEP 2: Match to Player DB -->
         <section class="tg-section">
           <h3>2. Match Players to Database</h3>
           <button class="admin-btn" id="tgMatchBtn">Match Players</button>
           <div id="tgMatchResults" class="tg-box"></div>
         </section>
 
-        <!-- STEP 3: Add Extra Players -->
         <section class="tg-section">
           <h3>3. Add Extra Players (Optional)</h3>
           <button class="admin-btn" id="tgAddExtraBtn">Add Extra Players</button>
           <div id="tgExtraPlayers" class="tg-box"></div>
         </section>
 
-        <!-- STEP 4: Generate Teams -->
         <section class="tg-section">
           <h3>4. Generate Teams</h3>
           <button class="admin-btn" id="tgGenerateBtn">Generate Teams</button>
           <div id="tgTeamsOutput" class="tg-box"></div>
         </section>
 
-        <!-- STEP 5: Manual Adjustments -->
         <section class="tg-section">
           <h3>5. Manual Adjustments</h3>
           <div id="tgManualAdjust" class="tg-box"></div>
         </section>
 
-        <!-- STEP 6: Publish Teams -->
         <section class="tg-section">
           <h3>6. Publish Teams</h3>
           <button class="admin-btn" id="tgPublishBtn">Publish Teams</button>
           <div id="tgPublishStatus" class="tg-box"></div>
         </section>
+      </div>
+
+      <!-- ⭐ FOOTER ACTIONS (CLEAN, NON-DUPLICATED) -->
+      <div class="admin-footer">
+        <div class="admin-actions">
+
+          <!-- ⭐ This now correctly navigates to your player database page -->
+          <button class="admin-btn" onclick="window.location.href='playerdb.html'">
+            Manage Player Database
+          </button>
+
+          <!-- ⭐ This jumps to the Team Generator tab -->
+          <button class="admin-btn" id="teamGenShortcut">
+            Team Generator
+          </button>
+
+        </div>
       </div>
 
     </div> <!-- END adminPanel -->
@@ -271,6 +279,14 @@
         document.getElementById(tab.dataset.tab).classList.add("active");
       });
     });
+
+    /* ⭐ Footer Team Generator shortcut */
+    const tgShortcut = document.getElementById("teamGenShortcut");
+    if (tgShortcut) {
+      tgShortcut.addEventListener("click", () => {
+        document.querySelector('.tab[data-tab="teamGenTab"]').click();
+      });
+    }
   </script>
 
   <script src="admin.js"></script>
