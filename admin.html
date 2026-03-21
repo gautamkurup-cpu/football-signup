@@ -171,7 +171,46 @@
     <!-- ⭐ TAB CONTENT: TEAM GENERATOR -->
     <div id="teamGenTab" class="tab-content">
       <h2>Team Generator</h2>
-      <p>Team generator UI will be injected here…</p>
+      <!-- STEP 1: Load Weekly Players -->
+  <section class="tg-section">
+    <h3>1. Load Weekly Signup List</h3>
+    <button class="admin-btn" id="tgLoadSignup">Load Weekly Players</button>
+    <div id="tgSignupList" class="tg-box"></div>
+  </section>
+
+  <!-- STEP 2: Match to Player DB -->
+  <section class="tg-section">
+    <h3>2. Match Players to Database</h3>
+    <button class="admin-btn" id="tgMatchBtn">Match Players</button>
+    <div id="tgMatchResults" class="tg-box"></div>
+  </section>
+
+  <!-- STEP 3: Add Extra Players -->
+  <section class="tg-section">
+    <h3>3. Add Extra Players (Optional)</h3>
+    <button class="admin-btn" id="tgAddExtraBtn">Add Extra Players</button>
+    <div id="tgExtraPlayers" class="tg-box"></div>
+  </section>
+
+  <!-- STEP 4: Generate Teams -->
+  <section class="tg-section">
+    <h3>4. Generate Teams</h3>
+    <button class="admin-btn" id="tgGenerateBtn">Generate Teams</button>
+    <div id="tgTeamsOutput" class="tg-box"></div>
+  </section>
+
+  <!-- STEP 5: Manual Adjustments -->
+  <section class="tg-section">
+    <h3>5. Manual Adjustments</h3>
+    <div id="tgManualAdjust" class="tg-box"></div>
+  </section>
+
+  <!-- STEP 6: Publish Teams -->
+  <section class="tg-section">
+    <h3>6. Publish Teams</h3>
+    <button class="admin-btn" id="tgPublishBtn">Publish Teams</button>
+    <div id="tgPublishStatus" class="tg-box"></div>
+  </section>
     </div>
 
   </div>
