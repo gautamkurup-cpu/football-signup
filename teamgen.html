@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Team Generator</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .topnav {
+      display: flex;
+      gap: 20px;
+      padding: 15px 20px;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+    }
+    .topnav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+    .topnav a.active {
+      font-weight: 700;
+      color: #000;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px 40px;
+    }
+
+    .admin-btn {
+      background: #007bff;
+      color: white;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .section {
+      margin-top: 25px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .team-column {
+      flex: 1 1 0;
+      min-width: 260px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .team-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .team-strength {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .player-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .player-main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .player-name {
+      font-weight: 600;
+    }
+
+    .player-meta {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .player-pos {
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #f0f0f0;
+      margin-left: 6px;
+    }
+
+    .pos-gk { background: #ffe4b5; }
+    .pos-def { background: #e0f7fa; }
+    .pos-mid { background: #e8f5e9; }
+    .pos-fwd { background: #ffebee; }
+
+    .swap-buttons button {
+      margin-left: 4px;
+      padding: 3px 6px;
+      font-size: 11px;
+    }
+
+    .warning {
+      color: #c00;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .small-text {
+      font-size: 13px;
+      color: #666;
+    }
+
+    select {
+      padding: 4px 6px;
+      font-size: 14px;
+    }
+
+    .inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topnav">
+    <a href="index.html">Signup</a>
+    <a href="teams.html">Teams</a>
+    <a href="stats.html">Stats</a>
+    <a href="playerdb.html">Player DB</a>
+    <a href="admin.html">Admin</a>
+    <a href="teamgen.html" class="active">Team Generator</a>
+  </div>
+
+  <div class="container">
+    <h1>Team Generator</h1>
+    <p class="small-text">
+      Uses Player Database ratings, positional assignment, and a fairness algorithm to build balanced teams.
+    </p>
+
+    <!-- 1. Load weekly signup + DB -->
+    <div class="section">
+      <h2>1. Load Weekly Players</h2>
+      <button class="admin-btn" id="tgLoadBtn">Load Weekly Signup</button>
+      <div id="tgLoadStatus" class="small-text" style="margin-top:8px;"></div>
+      <div id="tgSignupList" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 2. Extra players -->
+    <div class="section">
+      <h2>2. Extra Players (Optional)</h2>
+      <p class="small-text">
+        The signup page is capped at 14. Add extra players from the Player Database if more are coming this week.
+      </p>
+      <div class="inline" style="margin-top:8px;">
+        <label for="tgExtraSelect">Add extra player:</label>
+        <select id="tgExtraSelect">
+          <option value="">-- select player --</option>
+        </select>
+        <button class="admin-btn" id="tgAddExtraBtn">Add</button>
+      </div>
+      <div id="tgExtraList" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 3. Name matching -->
+    <div class="section">
+      <h2>3. Name Matching</h2>
+      <p class="small-text">
+        Signup names are matched to Player Database entries using normalization and fuzzy matching.
+        Ambiguous matches will be shown for manual resolution.
+      </p>
+      <button class="admin-btn" id="tgMatchBtn">Run Name Matching</button>
+      <div id="tgMatchStatus" class="small-text" style="margin-top:8px;"></div>
+      <div id="tgAmbiguousList" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- 4. Generate teams -->
+    <div class="section">
+      <h2>4. Generate Teams</h2>
+      <p class="small-text">
+        Uses GK assignment, defensive units, snake draft, and positional balance. Team strength is based only on
+        assigned position ratings.
+      </p>
+      <button class="admin-btn" id="tgGenerateBtn">Generate Teams</button>
+      <button class="admin-btn" id="tgRegenerateBtn" style="margin-left:8px;">Regenerate</button>
+      <div id="tgGenerateStatus" class="small-text" style="margin-top:8px;"></div>
+    </div>
+
+    <!-- 5. Teams + manual adjustments -->
+    <div class="section">
+      <h2>5. Teams & Manual Adjustments</h2>
+      <div class="flex-row" id="tgTeamsContainer">
+        <!-- Team columns injected here -->
+      </div>
+      <div id="tgStructureWarnings" class="warning"></div>
+    </div>
+
+    <!-- 6. Publish -->
+    <div class="section">
+      <h2>6. Publish Teams</h2>
+      <button class="admin-btn" id="tgPublishBtn">Publish to Teams Page</button>
+      <div id="tgPublishStatus" class="small-text" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <script src="teamgen.js"></script>
+</body>
+</html>
