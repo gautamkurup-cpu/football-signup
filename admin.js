@@ -124,3 +124,36 @@ el("resetBtn").onclick = async () => {
   renderList(data.players || []);
   setAdminMsg("List reset");
 };
+// ------------------------------------------------------------
+// TEAM GENERATOR HOOKS (Phase 1 UI only — no logic yet)
+// ------------------------------------------------------------
+
+if (el("tgLoadSignup")) {
+  el("tgLoadSignup").onclick = () => {
+    el("tgSignupList").textContent = "Loading signup list...";
+  };
+}
+
+if (el("tgMatchBtn")) {
+  el("tgMatchBtn").onclick = () => {
+    el("tgMatchResults").textContent = "Matching players...";
+  };
+}
+
+if (el("tgAddExtraBtn")) {
+  el("tgAddExtraBtn").onclick = () => {
+    el("tgExtraPlayers").textContent = "Extra player selection coming...";
+  };
+}
+
+if (el("tgGenerateBtn")) {
+  el("tgGenerateBtn").onclick = () => {
+    el("tgTeamsOutput").textContent = "Generating teams...";
+  };
+}
+
+if (el("tgPublishBtn")) {
+  el("tgPublishBtn").onclick = () => {
+    el("tgPublishStatus").textContent = "Publishing teams...";
+  };
+}
