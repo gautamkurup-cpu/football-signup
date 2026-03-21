@@ -204,7 +204,8 @@ th.sorted-desc .sort-icon {
   position: sticky;
   top: 0;
   background: #ffffff;
-  color: #000;   /* force visible text */
+  color: #111;          /* ← dark header text */
+  font-weight: 600;     /* optional: makes headers crisp */
   z-index: 5;
   border-bottom: 2px solid #ddd;
 }
