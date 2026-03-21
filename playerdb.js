@@ -32,12 +32,8 @@ async function loadPlayers() {
       <td>${a.defence}</td>
       <td>${a.gk}</td>
       <td>${positionIcons[c.bestPosition] || ""} ${c.bestPosition}</td>
-      <td>
-        <button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button>
-      </td>
-      <td>
-        <button class="delete-btn" onclick="deletePlayer('${player.id}')">Delete</button>
-      </td>
+      <td><button class="edit-btn" onclick="editPlayer('${player.id}')">Edit</button></td>
+      <td><button class="delete-btn" onclick="deletePlayer('${player.id}')">Delete</button></td>
     `;
 
     tbody.appendChild(tr);
@@ -62,7 +58,7 @@ async function deletePlayer(id) {
     body: JSON.stringify({ id })
   });
 
-  loadPlayers(); // refresh table
+  loadPlayers();
 }
 
 /* -----------------------------------------
@@ -73,13 +69,13 @@ document.getElementById("searchInput").addEventListener("input", function () {
   const rows = document.querySelectorAll("#playerTableBody tr");
 
   rows.forEach(row => {
-    const name = row.children[1].textContent.toLowerCase(); // name column
+    const name = row.children[1].textContent.toLowerCase();
     row.style.display = name.includes(term) ? "" : "none";
   });
 });
 
 /* -----------------------------------------
-   Sortable Columns with Toggle
+   Sortable Columns with Toggle + Highlight
 ----------------------------------------- */
 let currentSortCol = null;
 let currentSortDir = "asc";
@@ -100,14 +96,15 @@ function sortTable(colIndex, header) {
     currentSortDir = "asc";
   }
 
-  // Remove previous sort classes
+  // Reset header classes
   document.querySelectorAll("th").forEach(th => {
     th.classList.remove("sorted-asc", "sorted-desc");
   });
 
-  // Add new sort class
+  // Apply new sort class
   header.classList.add(currentSortDir === "asc" ? "sorted-asc" : "sorted-desc");
 
+  // Sort rows
   const sorted = rows.sort((a, b) => {
     const A = a.children[colIndex].textContent.trim();
     const B = b.children[colIndex].textContent.trim();
@@ -126,6 +123,22 @@ function sortTable(colIndex, header) {
     return currentSortDir === "asc" ? comparison : -comparison;
   });
 
+  // Clear old highlight
+  rows.forEach(row => {
+    Array.from(row.children).forEach(td => td.classList.remove("sorted-col"));
+  });
+
+  // Apply highlight to sorted column
+  sorted.forEach(row => {
+    row.children[colIndex].classList.add("sorted-col");
+  });
+
+  // Reassign stable serial numbers
+  sorted.forEach((row, i) => {
+    row.children[0].textContent = i + 1;
+  });
+
+  // Re-render table
   tbody.innerHTML = "";
   sorted.forEach(r => tbody.appendChild(r));
 }
