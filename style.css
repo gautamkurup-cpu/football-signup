@@ -52,4 +52,26 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   max-height: 180px;
   object-fit: cover;
 }
+/* FOOTER NAVIGATION */
+.footer-nav {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  padding: 15px 0;
+  margin-top: 40px;
+  border-top: 1px solid #ddd;
+  background: #f5f5f5;
+  font-size: 16px;
+}
+
+.footer-nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.footer-nav a:hover {
+  color: #000;
+  text-decoration: underline;
+}
 
