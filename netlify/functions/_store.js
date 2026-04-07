@@ -1,7 +1,19 @@
 import { getStore } from "@netlify/blobs";
 
+const STORE_NAME = process.env.SIGNUP_STORE_NAME || "football-signup";
+
 function store() {
-  return getStore("football-signup");
+  return getStore(STORE_NAME);
+}
+
+export function getStoreDiagnostics() {
+  return {
+    storeName: STORE_NAME,
+    context: process.env.CONTEXT || "unknown",
+    branch: process.env.BRANCH || "unknown",
+    deployUrl: process.env.DEPLOY_URL || "",
+    siteUrl: process.env.URL || ""
+  };
 }
 
 export async function getState() {

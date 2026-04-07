@@ -18,6 +18,25 @@ function setAdminMsg(text, isError = false) {
   m.style.color = isError ? "#b00020" : "#1b6cff";
 }
 
+function setScopeInfo(text) {
+  const info = el("adminScopeInfo");
+  if (!info) return;
+  info.textContent = text || "";
+}
+
+async function loadScopeInfo() {
+  try {
+    const res = await fetch(`/api/diagnostics?ts=${Date.now()}`, { cache: "no-store" });
+    const data = await res.json().catch(() => ({}));
+    const context = data.context || "unknown";
+    const branch = data.branch || "unknown";
+    const storeName = data.storeName || "unknown";
+    setScopeInfo(`Scope: ${context}/${branch} | Store: ${storeName}`);
+  } catch {
+    setScopeInfo("Scope: unavailable");
+  }
+}
+
 // ✅ Cache-busting version: always fetch fresh state
 async function loadSharedState() {
   const res = await fetch(`/api/state?ts=${Date.now()}`, { cache: "no-store" });
@@ -96,6 +115,7 @@ el("loginBtn").onclick = async () => {
   el("loginBox").style.display = "none";
   el("adminPanel").style.display = "block";
 
+  await loadScopeInfo();
   await refresh();
   setAdminMsg("Loaded shared list");
 };

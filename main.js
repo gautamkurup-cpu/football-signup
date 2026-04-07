@@ -74,6 +74,25 @@ function setSyncing(on) {
   if (s) s.style.display = on ? "inline" : "none";
 }
 
+function setScopeInfo(text) {
+  const info = el("scopeInfo");
+  if (!info) return;
+  info.textContent = text || "";
+}
+
+async function loadScopeInfo() {
+  try {
+    const res = await fetch(`/api/diagnostics?ts=${Date.now()}`, { cache: "no-store" });
+    const data = await res.json().catch(() => ({}));
+    const context = data.context || "unknown";
+    const branch = data.branch || "unknown";
+    const storeName = data.storeName || "unknown";
+    setScopeInfo(`Scope: ${context}/${branch} | Store: ${storeName}`);
+  } catch {
+    setScopeInfo("Scope: unavailable");
+  }
+}
+
 // ---------- Date: next Sunday ----------
 function ordinal(n) {
   const mod100 = n % 100;
@@ -193,16 +212,6 @@ async function loadPlayersFromServer(showIndicator = false) {
     const data = await res.json();
 
     const newPlayers = Array.isArray(data.players) ? data.players : [];
-
-    // --- Prevent flicker: ignore stale server updates that remove our optimistic join ---
-    if (pendingJoinName && !newPlayers.includes(pendingJoinName)) {
-      return;
-    }
-
-    // --- Smart full-list protection ---
-    if (players.length >= MAX_PLAYERS && newPlayers.length >= MAX_PLAYERS) {
-      return;
-    }
 
     if (!arraysEqual(players, newPlayers)) {
       players = newPlayers;
@@ -403,3 +412,4 @@ if (weatherLine) {
 wireJoinButton();
 loadPlayersFromServer(false);
 loadWeatherAt3pm(gameDate);
+loadScopeInfo();

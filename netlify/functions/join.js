@@ -1,5 +1,12 @@
 import { getState, saveState } from "./_store.js";
 
+const MAX_PLAYERS = 14;
+const MAX_RETRIES = 4;
+
+function uniqueNames(list) {
+  return [...new Set((Array.isArray(list) ? list : []).map((n) => String(n).trim()).filter(Boolean))];
+}
+
 export default async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
@@ -9,30 +16,48 @@ export default async (req) => {
       return Response.json({ error: "Name required" }, { status: 400 });
     }
 
-    // Try up to 2 times to mitigate races
+    // Merge-safe retries to reduce lost updates under concurrent joins.
     let state;
-    for (let attempt = 0; attempt < 2; attempt++) {
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       state = await getState();
+      const currentPlayers = uniqueNames(state.players);
 
-      // Prevent duplicates
-      if (!Array.isArray(state.players)) {
-        state.players = [];
-      }
-      if (!state.players.includes(name)) {
-        state.players = [...state.players, name];
+      if (currentPlayers.includes(name)) {
+        return Response.json({ ...state, players: currentPlayers });
       }
 
-      await saveState(state);
+      if (currentPlayers.length >= MAX_PLAYERS) {
+        return Response.json(
+          { error: `Game is full (${MAX_PLAYERS}/${MAX_PLAYERS})`, players: currentPlayers },
+          { status: 409 }
+        );
+      }
 
-      // Re-read to confirm
+      const desiredPlayers = [...currentPlayers, name];
+      await saveState({ ...state, players: desiredPlayers });
+
+      // Re-read and merge to avoid clobbering concurrent writes.
       const confirm = await getState();
-      if (Array.isArray(confirm.players) && confirm.players.includes(name)) {
-        state = confirm;
+      const mergedPlayers = uniqueNames([...(confirm.players || []), ...desiredPlayers]).slice(0, MAX_PLAYERS);
+
+      if (!uniqueNames(confirm.players).includes(name) || mergedPlayers.length !== uniqueNames(confirm.players).length) {
+        await saveState({ ...confirm, players: mergedPlayers });
+      }
+
+      const finalState = await getState();
+      const finalPlayers = uniqueNames(finalState.players);
+      if (finalPlayers.includes(name)) {
+        state = { ...finalState, players: finalPlayers };
         break;
       }
     }
 
-    return Response.json(state);
+    const resolvedPlayers = uniqueNames(state?.players);
+    if (!state || !resolvedPlayers.includes(name)) {
+      return Response.json({ error: "Could not process join. Try again." }, { status: 500 });
+    }
+
+    return Response.json({ ...state, players: resolvedPlayers });
   } catch (err) {
     return Response.json(
       { error: err?.message || String(err) },
